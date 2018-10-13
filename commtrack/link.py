@@ -12,15 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import argparse
 
+class Link(object):
 
-def create_parser():
-    """Returns argument parser"""
-
-    parser = argparse.ArgumentParser(add_help=True)
-
-    parser.add_argument('--debug', '-d', action='store_true',
-                        dest="debug", help='Turn on debug')
-
-    return parser
+    def __init__(self):
+        pass

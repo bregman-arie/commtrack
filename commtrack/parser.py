@@ -11,33 +11,18 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import logging
-import sys
 
-import commtrack.parser as c_parser
-from commtrack.chain import Chain
+import argparse
 
 
-def setup_logging(debug):
-    """Sets the logging."""
-    format = '%(message)s'
-    level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(level=level, format=format)
+def create_parser():
+    """Returns argument parser"""
 
+    parser = argparse.ArgumentParser(add_help=True)
 
-def main():
-    """Main Entry."""
+    parser.add_argument('--debug', '-d', action='store_true',
+                        dest="debug", help='Turn on debug')
 
-    # Parse arguments provided by the user
-    parser = c_parser.create_parser()
-    args = parser.parse_args()
-
-    setup_logging(args.debug)
-
-    # Create a chain
-    c = Chain()
-    print(c)
-
-
-if __name__ == '__main__':
-    sys.exit(main())
+    parser.add_argument('--commit', '-c', dest="commit",
+                        required=True, help="Commit hash")
+    return parser

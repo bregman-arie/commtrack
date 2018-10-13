@@ -1,0 +1,8 @@
+[Default]
+
+chain=openstack_us,openstack_ds
+
+[Gerrit]
+
+openstack_us = review.openstack.org
+openstack_ds = ds.gerrit.com

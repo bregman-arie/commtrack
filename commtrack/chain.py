@@ -12,32 +12,29 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import logging
+import os
 import sys
 
-import commtrack.parser as c_parser
-from commtrack.chain import Chain
+LOG = logging.getLogger(__name__)
 
 
-def setup_logging(debug):
-    """Sets the logging."""
-    format = '%(message)s'
-    level = logging.DEBUG if debug else logging.INFO
-    logging.basicConfig(level=level, format=format)
+class Chain(object):
 
+    def __init__(self):
+        links = self.load_chain()
+        print(links)
 
-def main():
-    """Main Entry."""
+    def load_chain(self):
+        """Loads chain as provided by the user."""
+        chain_f = self.find_chain_file()
+        print(chain_f)
 
-    # Parse arguments provided by the user
-    parser = c_parser.create_parser()
-    args = parser.parse_args()
-
-    setup_logging(args.debug)
-
-    # Create a chain
-    c = Chain()
-    print(c)
-
-
-if __name__ == '__main__':
-    sys.exit(main())
+    def find_chain_file(self):
+        """Locate chain file."""
+        if os.path.isfile('.chain'):
+            return '.chain'
+        elif os.path.isfile('/etc/commtrack/chain'):
+            return '/etc/commtrack/chain'
+        else:
+            LOG.info("Unable to find chain file...exiting")
+            sys.exit(2)
