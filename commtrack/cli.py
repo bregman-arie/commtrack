@@ -14,7 +14,7 @@
 import logging
 import sys
 
-import commtrack.parser as c_parser
+import commtrack.parser as app_parser
 from commtrack.chain import Chain
 
 
@@ -27,16 +27,17 @@ def setup_logging(debug):
 
 def main():
     """Main Entry."""
-
     # Parse arguments provided by the user
-    parser = c_parser.create_parser()
+    parser = app_parser.create_parser()
     args = parser.parse_args()
 
     setup_logging(args.debug)
 
-    # Create a chain
-    c = Chain()
-    print(c)
+    # Create a chain and execute it
+    chain = Chain()
+    print(chain)
+
+    # chain.run()
 
 
 if __name__ == '__main__':

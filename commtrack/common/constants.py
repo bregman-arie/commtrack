@@ -12,16 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import argparse
-
-
-def create_parser():
-    """Returns argument parser"""
-
-    parser = argparse.ArgumentParser(add_help=True)
-
-    parser.add_argument('--debug', '-d', action='store_true',
-                        dest="debug", help='Turn on debug')
-    parser.add_argument('commit', help="Commit hash")
-
-    return parser
+LINKS = {'openstack_us': {'type': 'gerrit'},
+         'openstack_ds': {'type': 'gerrit'}
+         }

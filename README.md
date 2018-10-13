@@ -16,7 +16,7 @@ You have to specify the chain (where to look and in what order)
 and each link in the chain has to be specified in a separate section
 
 ```
-[Default]
+[DEFAULT]
 chain=us_openstack
 
 [Gerrit]
@@ -30,6 +30,13 @@ in what is known as the "Chain". A chain is composed of links. A link can be one
 the following supported types:
 
 * Gerrit
+
+## Predefined Links
+
+Name | Type | Description
+:------ |:------:|:--------:
+openstack | Gerrit | OpenStack Gerrit
+
 
 ## Contributions
 
