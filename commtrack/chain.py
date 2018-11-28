@@ -37,9 +37,7 @@ class Chain(object):
     def load_predefined_links(self):
         """Loads links defined in the project."""
         for link in LINKS:
-            self.links.append(name=link['name'],
-                              address=link['address'],
-                              ltype=link['type'])
+            self.add_link(link['name'], link['address'], link['type'])
         LOG.debug("Loaded predefined links.")
         print(self.links)
 
@@ -48,21 +46,23 @@ class Chain(object):
         chain_f = self.chain_f or self.locate_chain_file()
         if chain_f:
             cfg = ConfigParser()
-            cfg.read(self.chain_f)
-            chain = cfg['DEFAULT']['chain']
-            links = chain.split(",")
+            cfg.read(chain_f)
+            self.order = cfg['DEFAULT']['chain'].split(',')
 
-            for link in links:
-                self.links.append(Link(name='a', address='b', ltype='c'))
+            for section in cfg.sections():
+                for link in cfg.options(section):
+                    if link != 'chain':
+                        self.add_link(link, cfg.get(section, link),
+                                      section)
+            LOG.debug("Loaded links from: {}".format(chain_f))
 
-            print(self.links)
+    def add_link(self, name, address, ltype):
+        self.links[name] = Link(name, address, ltype)
 
-    def run(self):
-        pass
-
-    def find_type(self, link):
-        """Returns link type."""
-        pass
+    def run(self, commit):
+        """Runs chain link by link based on order attribute."""
+        for link in self.order:
+            LOG.info("Found commit in {}".format(link))
 
     @staticmethod
     def locate_chain_file():

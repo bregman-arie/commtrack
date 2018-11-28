@@ -12,10 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
-class Link(object):
-
-    def __init__(self, name, address, ltype):
-        self.name = name
-        self.adress = address
-        self.ltype = ltype
+LINKS = [{'name': 'openstack',
+          'address': 'http://review.openstack.org',
+          'type': 'gerrit'}]
