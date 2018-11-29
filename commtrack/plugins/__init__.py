@@ -11,18 +11,3 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import importlib
-
-
-class Link(object):
-
-    def __init__(self, name, address, ltype):
-        self.name = name
-        self.adress = address
-        self.ltype = ltype.lower()
-        self.plugin = self.load_plugin()
-
-    def load_plugin():
-        """Returns plugin instance based on the link type."""
-        Plugin = getattr(importlib.import_module("commtrack.plugins.{}"), "pluginclass")
-        return Plugin()

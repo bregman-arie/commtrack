@@ -11,18 +11,13 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import importlib
 
 
-class Link(object):
+class Gerrit(object):
+    """Plugin for managing operations on Gerrit Code review system."""
 
-    def __init__(self, name, address, ltype):
-        self.name = name
-        self.adress = address
-        self.ltype = ltype.lower()
-        self.plugin = self.load_plugin()
+    def __init__(self):
+        pass
 
-    def load_plugin():
-        """Returns plugin instance based on the link type."""
-        Plugin = getattr(importlib.import_module("commtrack.plugins.{}"), "pluginclass")
-        return Plugin()
+    def search():
+        pass

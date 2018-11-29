@@ -39,7 +39,6 @@ class Chain(object):
         for link in LINKS:
             self.add_link(link['name'], link['address'], link['type'])
         LOG.debug("Loaded predefined links.")
-        print(self.links)
 
     def load_links_from_file(self):
         """Loads links from a file describing a chain"""
@@ -62,7 +61,11 @@ class Chain(object):
     def run(self, commit):
         """Runs chain link by link based on order attribute."""
         for link in self.order:
-            LOG.info("Found commit in {}".format(link))
+            link.search(commit)
+        self.generate_report()
+
+    def generate_report(self):
+        pass
 
     @staticmethod
     def locate_chain_file():
