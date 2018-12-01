@@ -19,5 +19,5 @@ class Gerrit(object):
     def __init__(self):
         pass
 
-    def search():
-        pass
+    def search(self, commit):
+        print("Gerrit search activated")

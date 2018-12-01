@@ -17,10 +17,14 @@ and each link in the chain has to be specified in a separate section
 
 ```
 [DEFAULT]
-chain=us_openstack
+links=openstack,my_repo
 
 [Gerrit]
-us_openstack = review.openstack.org
+openstack = review.openstack.org
+
+[Repository]
+
+my_repo = http://my_server/repo
 ```
 
 ## How it works?

@@ -34,7 +34,7 @@ def main():
     setup_logging(args.debug)
 
     # Create a chain and execute it
-    chain = Chain()
+    chain = Chain(args.links)
     chain.run(args.commit)
 
 

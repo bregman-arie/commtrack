@@ -22,7 +22,14 @@ class Link(object):
         self.ltype = ltype.lower()
         self.plugin = self.load_plugin()
 
-    def load_plugin():
+    def load_plugin(self):
         """Returns plugin instance based on the link type."""
-        Plugin = getattr(importlib.import_module("commtrack.plugins.{}"), "pluginclass")
-        return Plugin()
+        plugin_class = getattr(
+            importlib.import_module("commtrack.plugins.{}".format(
+                self.ltype)), self.ltype.capitalize())
+        return plugin_class()
+
+    def search(self, commit):
+        print(commit)
+        print(self.plugin)
+        (self.plugin).search(commit)

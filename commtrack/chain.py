@@ -24,13 +24,17 @@ LOG = logging.getLogger(__name__)
 
 class Chain(object):
 
-    def __init__(self, links={}, chain_f=None):
-        self.links = links
+    def __init__(self, links=None, chain_f=None):
         self.chain_f = chain_f
-        self.load_links()
+        self.load_all_links()
+        # Links can be provided via the configuration file
+        # If provided by CLI they override file 'links'
+        if links:
+            self.links = self.get_links(links)
 
-    def load_links(self):
+    def load_all_links(self):
         """Loads links from different sources."""
+        self.available_links = dict()
         self.load_predefined_links()
         self.load_links_from_file()
 
@@ -46,21 +50,30 @@ class Chain(object):
         if chain_f:
             cfg = ConfigParser()
             cfg.read(chain_f)
-            self.order = cfg['DEFAULT']['chain'].split(',')
 
             for section in cfg.sections():
                 for link in cfg.options(section):
-                    if link != 'chain':
+                    if link != 'links':
                         self.add_link(link, cfg.get(section, link),
                                       section)
+
+            links = cfg['DEFAULT']['links'].split(',')
+            self.links = self.get_links(links)
             LOG.debug("Loaded links from: {}".format(chain_f))
 
+    def get_links(self, links):
+        """Returns list of link objects based on given links names."""
+        links_li = []
+        for link in links:
+            links_li.append(self.available_links[link])
+        return links_li
+
     def add_link(self, name, address, ltype):
-        self.links[name] = Link(name, address, ltype)
+        self.available_links[name] = Link(name, address, ltype)
 
     def run(self, commit):
-        """Runs chain link by link based on order attribute."""
-        for link in self.order:
+        """Runs chain link by link."""
+        for link in self.links:
             link.search(commit)
         self.generate_report()
 
