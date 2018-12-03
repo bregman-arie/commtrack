@@ -32,10 +32,11 @@ def main():
     args = parser.parse_args()
 
     setup_logging(args.debug)
+    links = [item for item in args.links.split(',')]
 
     # Create a chain and execute it
-    chain = Chain(args.links)
-    chain.run(args.commit)
+    chain = Chain(args.change, links=links)
+    chain.run()
     chain.generate_report()
 
 

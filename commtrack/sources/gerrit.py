@@ -11,6 +11,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+import json
 import logging
 import subprocess
 
@@ -25,18 +26,20 @@ class Gerrit(object):
 
     def query(self, address, change):
         """Returns query result,"""
-        data = subprocess.check_output([
+        d = subprocess.check_output([
             'ssh', '-p', '29418',
-            'review.openstack.org',
+            address.strip('\"'),
             'gerrit', 'query',
             'limit:5',
             'change:{}'.format(change),
             '--format JSON'])
 
-        return data.split('\n')[:-1][0]
+        data = d.decode('ascii')
+        json_data = json.loads(data.split('\n')[0])
+        return json_data
 
     def search(self, address, commit):
         """Returns the result of searching the given change."""
         result = self.query(address, commit)
         if result['project']:
-            return True
+            return result['status']

@@ -24,7 +24,8 @@ LOG = logging.getLogger(__name__)
 
 class Chain(object):
 
-    def __init__(self, links=None, chain_f=None):
+    def __init__(self, change, links=None, chain_f=None):
+        self.change = change
         self.chain_f = chain_f
         self.load_all_links()
         # Links can be provided via the configuration file
@@ -64,21 +65,24 @@ class Chain(object):
     def get_links(self, links):
         """Returns list of link objects based on given links names."""
         links_li = []
-        for link in links:
+        for link in list(links):
             links_li.append(self.available_links[link])
         return links_li
 
     def add_link(self, name, address, ltype):
         self.available_links[name] = Link(name, address, ltype)
 
-    def run(self, commit):
+    def run(self):
         """Runs chain link by link."""
         for link in self.links:
-            link.search(commit)
+            link.search(self.change)
 
     def generate_report(self):
+        LOG.info("============ Report ================\n")
+
+        LOG.info("Tracked Change ID {}\n".format(self.change))
         for link in self.links:
-            print(link.result)
+            LOG.info("{}: {}".format(link.name, link.result))
 
     @staticmethod
     def locate_chain_file():

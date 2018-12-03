@@ -30,7 +30,5 @@ class Link(object):
         return source_class()
 
     def search(self, change):
-        print(change)
-        print(self.source)
         result = (self.source).search(self.address, change)
         self.result = result

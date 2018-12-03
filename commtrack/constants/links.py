@@ -13,5 +13,5 @@
 #    under the License.
 
 LINKS = [{'name': 'openstack',
-          'address': 'http://review.openstack.org',
+          'address': 'review.openstack.org',
           'type': 'gerrit'}]
