@@ -18,18 +18,19 @@ class Link(object):
 
     def __init__(self, name, address, ltype):
         self.name = name
-        self.adress = address
+        self.address = address
         self.ltype = ltype.lower()
-        self.plugin = self.load_plugin()
+        self.source = self.load_source()
 
-    def load_plugin(self):
-        """Returns plugin instance based on the link type."""
-        plugin_class = getattr(
-            importlib.import_module("commtrack.plugins.{}".format(
+    def load_source(self):
+        """Returns source instance based on the link type."""
+        source_class = getattr(
+            importlib.import_module("commtrack.sources.{}".format(
                 self.ltype)), self.ltype.capitalize())
-        return plugin_class()
+        return source_class()
 
-    def search(self, commit):
-        print(commit)
-        print(self.plugin)
-        (self.plugin).search(commit)
+    def search(self, change):
+        print(change)
+        print(self.source)
+        result = (self.source).search(self.address, change)
+        self.result = result

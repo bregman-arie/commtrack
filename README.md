@@ -29,9 +29,8 @@ my_repo = http://my_server/repo
 
 ## How it works?
 
-Commtrack is looking for the specified commit (or any other provided identifier)
-in what is known as the "Chain". A chain is composed of links. A link can be one of
-the following supported types:
+Commtrack is looking for the specified change in what is known as the "Chain".
+A chain is composed of links. A link can be one of the following supported types:
 
 * Gerrit
 

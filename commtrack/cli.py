@@ -36,6 +36,7 @@ def main():
     # Create a chain and execute it
     chain = Chain(args.links)
     chain.run(args.commit)
+    chain.generate_report()
 
 
 if __name__ == '__main__':

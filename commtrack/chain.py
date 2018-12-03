@@ -75,10 +75,10 @@ class Chain(object):
         """Runs chain link by link."""
         for link in self.links:
             link.search(commit)
-        self.generate_report()
 
     def generate_report(self):
-        pass
+        for link in self.links:
+            print(link.result)
 
     @staticmethod
     def locate_chain_file():
