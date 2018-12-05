@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 commtrack = {editable = true, path = "."}
+crayons = "*"
 
 [dev-packages]
 

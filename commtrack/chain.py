@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 from configparser import ConfigParser
+import crayons
 import logging
 import os
 import sys
@@ -66,7 +67,10 @@ class Chain(object):
         """Returns list of link objects based on given links names."""
         links_li = []
         for link in list(links):
-            links_li.append(self.available_links[link])
+            try:
+                links_li.append(self.available_links[link])
+            except KeyError:
+                print()
         return links_li
 
     def add_link(self, name, address, ltype):
@@ -75,10 +79,11 @@ class Chain(object):
     def run(self):
         """Runs chain link by link."""
         for link in self.links:
+            LOG.info("Looking in {}".format(crayons.yellow(link.name)))
             link.search(self.change)
 
-    def generate_report(self):
-        LOG.info("============ Report ================\n")
+    def generate_summary(self):
+        LOG.info("============ Summary ================\n")
 
         LOG.info("Tracked Change ID {}\n".format(self.change))
         for link in self.links:

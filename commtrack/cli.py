@@ -11,6 +11,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+import crayons
 import logging
 import sys
 
@@ -25,19 +26,45 @@ def setup_logging(debug):
     logging.basicConfig(level=level, format=format)
 
 
+def usage_help():
+    """Help message format."""
+    message = """
+Usage Examples:
+
+Track change ID:
+$ {0}
+
+Track commit in given links:
+$ {1}
+""".format(crayons.red("commtrack --changeid 23231"),
+           crayons.red("commtrack --commit 2d4m2 --links openstack"),)
+    return message
+
+
+def verify_input(args):
+    """Verifies user provided at least one of the required arguments for
+    tracking a change.
+    """
+    if not args.commit and not args.change_id:
+        print(usage_help())
+        sys.exit(2)
+
+
 def main():
     """Main Entry."""
     # Parse arguments provided by the user
     parser = app_parser.create_parser()
     args = parser.parse_args()
 
+    verify_input(args)
+
     setup_logging(args.debug)
     links = [item for item in args.links.split(',')]
 
     # Create a chain and execute it
-    chain = Chain(args.change, links=links)
+    chain = Chain(args.change_id, links=links)
     chain.run()
-    chain.generate_report()
+    chain.generate_summary()
 
 
 if __name__ == '__main__':

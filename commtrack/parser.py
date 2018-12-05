@@ -25,6 +25,11 @@ def create_parser():
     parser.add_argument('--links', '-l',
                         dest="links",
                         help='The name of the links the chain consists of')
-    parser.add_argument('change', help="Change ID")
+    parser.add_argument('--changeid', '-ci',
+                        dest="change_id",
+                        help='The change ID to track')
+    parser.add_argument('--commit', '-c',
+                        dest="commit",
+                        help='The commit hash to track')
 
     return parser

@@ -1,12 +1,18 @@
 # Commtrack
 
-Tracking commits was never easier...well, sort of :)
+Tracking commits was never easier.
 
 
 ## Usage
 
 ```
-commtrack 344a9956f9f2d055c96f3446ec03ef486294141b
+# Search for comit 2142
+
+commtrack -c 2142
+
+# Search for change ID in OpenStack Gerrit:
+
+commtrack --changeid t3gq2 --links openstack
 ```
 
 ## Configuration
@@ -19,11 +25,10 @@ and each link in the chain has to be specified in a separate section
 [DEFAULT]
 links=openstack,my_repo
 
-[Gerrit]
+[gerrit]
 openstack = review.openstack.org
 
-[Repository]
-
+[repository]
 my_repo = http://my_server/repo
 ```
 
@@ -33,6 +38,7 @@ Commtrack is looking for the specified change in what is known as the "Chain".
 A chain is composed of links. A link can be one of the following supported types:
 
 * Gerrit
+* Git
 
 ## Predefined Links
 
