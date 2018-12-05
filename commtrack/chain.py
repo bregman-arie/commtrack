@@ -19,6 +19,7 @@ import sys
 
 from commtrack.link import Link
 from commtrack.constants.links import LINKS
+from commtrack.exceptions.usage import missing_link
 
 LOG = logging.getLogger(__name__)
 
@@ -70,7 +71,8 @@ class Chain(object):
             try:
                 links_li.append(self.available_links[link])
             except KeyError:
-                print()
+                LOG.info(missing_link(link))
+                sys.exit(2)
         return links_li
 
     def add_link(self, name, address, ltype):
@@ -83,6 +85,7 @@ class Chain(object):
             link.search(self.change)
 
     def generate_summary(self):
+        """Outputs summary of the search for each link in the chain."""
         LOG.info("============ Summary ================\n")
 
         LOG.info("Tracked Change ID {}\n".format(self.change))

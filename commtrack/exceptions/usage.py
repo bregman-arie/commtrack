@@ -19,11 +19,25 @@ def general_usage():
     message = """
 Usage Examples:
 
-Track change ID:
-$ {0}
+    Track change ID:
+    $ {0}
 
-Track commit in given links:
-$ {1}
+    Track commit in given links:
+    $ {1}
 """.format(crayons.red("commtrack --changeid 23231"),
            crayons.red("commtrack --commit 2d4m2 --links openstack"),)
+    return message
+
+
+def missing_link(link):
+    """Message on how to use links."""
+    message = """
+Couldn't find the link {0}.
+Make sure link in configured in chain file the following way:
+
+    {1}
+    {2}
+    """.format(crayons.red(link),
+               crayons.red("[<link_type>] # For example: gerrit"),
+               crayons.red("my_link_name=<link_address>"))
     return message
