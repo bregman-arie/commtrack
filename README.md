@@ -3,6 +3,13 @@
 Tracking commits was never easier.
 
 
+## Installation
+
+```
+cd commtrack
+pipenv install -e .
+```
+
 ## Usage
 
 ```
@@ -17,9 +24,13 @@ commtrack --changeid t3gq2 --links openstack
 
 ## Configuration
 
-There is a sample configuration in `samples` directory.
-You have to specify the chain (where to look and in what order)
-and each link in the chain has to be specified in a separate section
+Note: There is a sample configuration in `samples` directory.
+
+Every chain file should define `links`. This is tells commtrack
+where to look for your commit and in what order.
+
+Also, if a link is not pre-defined in commtrack, you have to specify
+it in its own section based on its type (Gerrit, Git, ...)
 
 ```
 [DEFAULT]
@@ -32,10 +43,19 @@ openstack = review.openstack.org
 my_repo = http://my_server/repo
 ```
 
+The configuration file should be set in one of the following locations:
+
+```
+.chain
+/etc/commtrack/chain
+```
+
+You can also pass it with `commtrack --conf` or `commtrack --chain`.
+
 ## How it works?
 
 Commtrack is looking for the specified change in what is known as the "Chain".
-A chain is composed of links. A link can be one of the following supported types:
+A chain is composed out of links. A link can be one of the following supported types:
 
 * Gerrit
 * Git

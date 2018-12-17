@@ -15,6 +15,8 @@ import json
 import logging
 import subprocess
 
+from commtrack.constants import gerrit as constants
+
 LOG = logging.getLogger(__name__)
 
 
@@ -24,22 +26,38 @@ class Gerrit(object):
     def __init__(self):
         pass
 
-    def query(self, address, change):
-        """Returns query result,"""
-        d = subprocess.check_output([
-            'ssh', '-p', '29418',
-            address.strip('\"'),
-            'gerrit', 'query',
-            'limit:5',
-            'change:{}'.format(change),
-            '--format JSON'])
+    def get_basic_query_cmd(self, address):
+        """Returns a very basic query command which extended based
 
-        data = d.decode('ascii')
+        on provided input from the user.
+        """
+        return ['ssh', '-p', '29418',
+                address.strip('\"'),
+                'gerrit', 'query',
+                'limit:5',
+                '--format JSON']
+
+    def query(self, address, params):
+        """Returns query result"""
+
+        query_cmd = self.get_basic_query_cmd(address)
+
+        if params['change']:
+            query_cmd.append('change:{}'.format(params['change']))
+
+        output = subprocess.check_output(query_cmd)
+
+        data = output.decode('ascii')
         json_data = json.loads(data.split('\n')[0])
         return json_data
 
-    def search(self, address, commit):
+    def search(self, address, params):
         """Returns the result of searching the given change."""
-        result = self.query(address, commit)
+        result = self.query(address, params)
         if result['project']:
-            return result['status']
+            status = self.colorize_result(result['status'])
+            return status
+        return None
+
+    def colorize_result(self, status):
+        return constants.COLORED_STATS[status]

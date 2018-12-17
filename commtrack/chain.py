@@ -19,6 +19,7 @@ import sys
 
 from commtrack.link import Link
 from commtrack.constants.links import LINKS
+from commtrack.constants.chain import CHAIN_LOCATIONS
 from commtrack.exceptions.usage import missing_link
 
 LOG = logging.getLogger(__name__)
@@ -82,7 +83,7 @@ class Chain(object):
         """Runs chain link by link."""
         for link in self.links:
             LOG.info("Looking in {}".format(crayons.yellow(link.name)))
-            link.search(self.change)
+            link.search(change=self.change)
 
     def generate_summary(self):
         """Outputs summary of the search for each link in the chain."""
@@ -95,10 +96,6 @@ class Chain(object):
     @staticmethod
     def locate_chain_file():
         """Locates chain file."""
-        if os.path.isfile('.chain'):
-            return '.chain'
-        elif os.path.isfile('/etc/commtrack/chain'):
-            return '/etc/commtrack/chain'
-        else:
-            LOG.info("Unable to find chain file...exiting")
-            sys.exit(2)
+        for chain_loc in CHAIN_LOCATIONS:
+            if os.path.isfile(chain_loc):
+                return chain_loc

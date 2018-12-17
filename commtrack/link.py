@@ -29,6 +29,6 @@ class Link(object):
                 self.ltype)), self.ltype.capitalize())
         return source_class()
 
-    def search(self, change):
-        result = (self.source).search(self.address, change)
+    def search(self, **params):
+        result = (self.source).search(self.address, params)
         self.result = result
