@@ -11,13 +11,16 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
-# Note that order is very important since it determines which
-# chain file will be used first in case of multiple matches.
 import crayons
 
-COLORED_STATS = {'MERGED': crayons.green('Merged'),
-                 'NEW': crayons.blue('In Review'),
-                 'missing': crayons.red('Not Found')}
 
-PORT = 29418
+def multiple_matches():
+    """Display message about multiple query matches in Gerrit."""
+    message = """
+Found multiple matches for the commit you specified.
+Try perhaps switching to change ID instead of commit:
+
+    $ {0}
+
+""".format(crayons.red("commtrack --changeid xyz"))
+    return message

@@ -14,8 +14,10 @@
 import json
 import logging
 import subprocess
+import sys
 
 from commtrack.constants import gerrit as constants
+from commtrack.exceptions.gerrit import multiple_matches
 
 LOG = logging.getLogger(__name__)
 
@@ -46,18 +48,25 @@ class Gerrit(object):
             query_cmd.append('change:{}'.format(params['change']))
 
         output = subprocess.check_output(query_cmd)
+        decoded_output = output.decode('utf-8')
+        query_result_li = decoded_output.split('\n')
 
-        data = output.decode('ascii')
-        json_data = json.loads(data.split('\n')[0])
+        # Handle multiple matches
+        if len(query_result_li) > 1:
+            LOG.info(multiple_matches())
+            sys.exit(2)
+
+        json_data = json.loads(query_result_li[0])
         return json_data
 
     def search(self, address, params):
         """Returns the result of searching the given change."""
         result = self.query(address, params)
-        if result['project']:
+        if 'project' in result:
             status = self.colorize_result(result['status'])
             return status
-        return None
+        else:
+            return constants.COLORED_STATS['missing']
 
     def colorize_result(self, status):
         return constants.COLORED_STATS[status]
