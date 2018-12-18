@@ -66,6 +66,16 @@ Name | Type | Description
 openstack_gerrit | Gerrit | OpenStack Gerrit
 gerrithub | Gerrit | GerritHub
 
+## Plugins
+
+A plugin is responsible for adjusting commtrack to your environment.
+For example:
+
+* Mapping branch names from one to another system
+* Save pre and post functions
+
+Default plugin is OpenStack.
+
 
 ## Contributions
 

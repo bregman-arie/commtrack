@@ -11,17 +11,3 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import logging
-
-LOG = logging.getLogger(__name__)
-
-
-class Git(object):
-    """Managing operations on Git based servers."""
-
-    def __init__(self):
-        self.requirements = []
-
-    def search(self, address, params):
-        """Returns result of the search based on the given change."""
-        return "a", {'b': 2}

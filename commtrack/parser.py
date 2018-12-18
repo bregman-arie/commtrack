@@ -34,5 +34,9 @@ def create_parser():
     parser.add_argument('--chain-file', '-f',
                         dest="chain_file",
                         help="Chain file path")
+    parser.add_argument('--plugin', '-p',
+                        dest="plugin",
+                        default="openstack",
+                        help="The name of the plugin to use.")
 
     return parser

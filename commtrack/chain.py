@@ -84,17 +84,11 @@ class Chain(object):
 
     def run(self):
         """Runs chain link by link."""
+        LOG.info("Tracking {}".format(self.parameters['change_id']))
         for link in self.links:
-            LOG.info("Looking in {}".format(crayons.yellow(link.name)))
-            params = link.search(self.parameters)
+            LOG.info("\nLooking in {}".format(crayons.yellow(link.name)))
+            params = link.search(link.address, self.parameters)
             self.parameters.update(params)
-
-    def generate_summary(self):
-        """Outputs summary of the search for each link in the chain."""
-        LOG.info("============ Summary ================\n")
-        LOG.info("Tracked Change ID {}\n".format(self.change))
-
-        for link in self.links:
             link.print_results()
 
     @staticmethod
