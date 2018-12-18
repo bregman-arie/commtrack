@@ -33,8 +33,13 @@ class Link(object):
                 self.ltype)), self.ltype.capitalize())
         return source_class()
 
-    def search(self, **params):
-        self.results = (self.source).search(self.address, params)
+    def search(self, parameters):
+        """Searches for the given change, updates results accordingly and returns
+
+        and additional parameters it discovered.
+        """
+        self.results, params = (self.source).search(self.address, parameters)
+        return params
 
     def print_results(self):
         LOG.info("{} link results:\n".format(crayons.yellow(self.name, bold=True)))

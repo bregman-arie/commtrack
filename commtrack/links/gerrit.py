@@ -26,7 +26,8 @@ class Gerrit(object):
     """Managing operations on Gerrit Code review system."""
 
     def __init__(self):
-        pass
+        # This is used for parameters discovered during the search
+        self.parameters = dict()
 
     def get_basic_query_cmd(self, address):
         """Returns a very basic query command which extended based
@@ -44,15 +45,15 @@ class Gerrit(object):
 
         query_cmd = self.get_basic_query_cmd(address)
 
-        if params['change']:
-            query_cmd.append('change:{}'.format(params['change']))
+        if params['change_id']:
+            query_cmd.append('change:{}'.format(params['change_id']))
 
         output = subprocess.check_output(query_cmd)
         decoded_output = output.decode('utf-8')
         query_result_li = decoded_output.split('\n')
 
         # Handle multiple matches
-        if len(query_result_li) > 1 and 'commit' in params:
+        if len(query_result_li) > 1 and params['commit']:
             LOG.info(exc.multiple_matches())
             sys.exit(2)
 
@@ -63,17 +64,20 @@ class Gerrit(object):
         """Returns the result of searching the given change."""
         results = []
         raw_result_li = self.query(address, params)
+        self.update_link_parameters(raw_result_li)
 
         for res in raw_result_li:
             if 'type' not in res and res != '':
                 results.append(self.process_result(res))
 
-        return results
-        # if 'project' in result:
-        #    status = self.colorize_result(result['status'])
-        #    return status
-        # else:
-        #    return constants.COLORED_STATS['missing']
+        return results, self.parameters
+
+    def update_link_parameters(self, raw_data):
+        """Update link parameters using data discovered during the query."""
+        data = json.loads(raw_data[0])
+        for param in constants.PROVIDED_PARAMS:
+            if param in data:
+                self.parameters[param] = data[param]
 
     def process_result(self, result):
         """Returns adjusted result with only the relevant information."""

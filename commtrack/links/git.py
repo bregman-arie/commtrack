@@ -24,4 +24,4 @@ class Git(object):
 
     def search(self, address, params):
         """Returns result of the search based on the given change."""
-        self.verify_requiremnts()
+        print(params['project'])

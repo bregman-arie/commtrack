@@ -31,5 +31,8 @@ def create_parser():
     parser.add_argument('--commit', '-c',
                         dest="commit",
                         help='The commit hash to track')
+    parser.add_argument('--chain-file', '-f',
+                        dest="chain_file",
+                        help="Chain file path")
 
     return parser

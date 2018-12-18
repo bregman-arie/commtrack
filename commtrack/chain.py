@@ -27,17 +27,16 @@ LOG = logging.getLogger(__name__)
 
 class Chain(object):
 
-    def __init__(self, change, links=None, chain_f=None):
-        self.change = change
-        self.chain_f = chain_f
+    def __init__(self, parameters):
+        self.parameters = parameters
+        if 'links' in self.parameters:
+            self.links = [item for item in self.parameters['links'].split(',')]
         self.available_links = self.get_predefined_links()
-        ignore_chain_from_file = False
         # Links can be provided via the configuration file
         # If provided by CLI they override the links provided via file.
-        if links:
-            self.links = self.get_link_instances(links)
-            ignore_chain_from_file = True
-        self.load_links_from_file(ignore_chain_from_file)
+        self.load_links_from_file(self.links)
+        if self.links:
+            self.links = self.get_link_instances(self.links)
 
     def get_predefined_links(self):
         """Loads links defined in the project."""
@@ -49,7 +48,7 @@ class Chain(object):
 
     def load_links_from_file(self, ignore_chain):
         """Loads links from a file describing a chain"""
-        chain_f = self.chain_f or self.locate_chain_file()
+        chain_f = self.parameters['chain_file'] or self.locate_chain_file()
         chain = None
         if chain_f:
             with open(chain_f, 'r') as stream:
@@ -87,7 +86,8 @@ class Chain(object):
         """Runs chain link by link."""
         for link in self.links:
             LOG.info("Looking in {}".format(crayons.yellow(link.name)))
-            link.search(change=self.change)
+            params = link.search(self.parameters)
+            self.parameters.update(params)
 
     def generate_summary(self):
         """Outputs summary of the search for each link in the chain."""

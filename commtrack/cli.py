@@ -40,19 +40,14 @@ def verify_input(args):
 def main():
     """Main Entry."""
     # Parse arguments provided by the user
-    links = None
     parser = app_parser.create_parser()
     args = parser.parse_args()
 
     setup_logging(args.debug)
     verify_input(args)
 
-    # Convert provided links string to a list
-    if args.links:
-        links = [item for item in args.links.split(',')]
-
     # Create a chain and execute it
-    chain = Chain(args.change_id, links=links)
+    chain = Chain(vars(args))
     chain.run()
     chain.generate_summary()
 

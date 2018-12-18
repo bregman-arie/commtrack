@@ -36,8 +36,10 @@ Couldn't find the link {0}.
 Make sure link in configured in chain file the following way:
 
     {1}
-    {2}
+      {2}
+    {3}
     """.format(crayons.red(link),
-               crayons.red("[<link_type>] # For example: gerrit"),
-               crayons.red("my_link_name=<link_address>"))
+               crayons.red("<link_type>:"),
+               crayons.red(link),
+               crayons.red("    address: 'my_gerrit.com'"))
     return message
