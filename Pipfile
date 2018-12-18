@@ -4,8 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-commtrack = {editable = true, path = "."}
+commtrack = {editable = true,path = "."}
 crayons = "*"
+pyyaml = "*"
 
 [dev-packages]
 

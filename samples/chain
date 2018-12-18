@@ -1,8 +1,5 @@
-[DEFAULT]
-
-chain=openstack_us,openstack_ds
-
-[Gerrit]
-
-openstack = review.openstack.org
-openstack_ds = ds.gerrit.com
+chain: 'openstack'
+links:
+  gerrit:
+    ds_gerrit:
+      address: 'code.engineering.redhat.com'

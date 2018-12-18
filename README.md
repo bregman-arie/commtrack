@@ -26,21 +26,20 @@ commtrack --changeid t3gq2 --links openstack
 
 Note: There is a sample configuration in `samples` directory.
 
-Every chain file should define `links`. This is tells commtrack
-where to look for your commit and in what order.
+Every chain file should include two entries:
 
-Also, if a link is not pre-defined in commtrack, you have to specify
-it in its own section based on its type (Gerrit, Git, ...)
+`chain` - This tells commtrack where to look for your change and in what order.
+`links` - This describes the places where commtrack should use.
+
+Note: You don't have to specify links if you are using only commtrack built-in
+      links.
 
 ```
-[DEFAULT]
-links=openstack,my_repo
-
-[gerrit]
-openstack = review.openstack.org
-
-[repository]
-my_repo = http://my_server/repo
+chain: 'openstack'
+links:
+  gerrit:
+    ds_gerrit:
+      address: 'code.engineering.redhat.com'
 ```
 
 The configuration file should be set in one of the following locations:
@@ -65,6 +64,7 @@ A chain is composed out of links. A link can be one of the following supported t
 Name | Type | Description
 :------ |:------:|:--------:
 openstack | Gerrit | OpenStack Gerrit
+gerrithub | Gerrit | GerritHub
 
 
 ## Contributions

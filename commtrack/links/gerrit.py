@@ -16,8 +16,8 @@ import logging
 import subprocess
 import sys
 
-from commtrack.constants import gerrit as constants
-from commtrack.exceptions.gerrit import multiple_matches
+from commtrack.gerrit import constants
+from commtrack.gerrit import exceptions as exc
 
 LOG = logging.getLogger(__name__)
 
@@ -52,21 +52,39 @@ class Gerrit(object):
         query_result_li = decoded_output.split('\n')
 
         # Handle multiple matches
-        if len(query_result_li) > 1:
-            LOG.info(multiple_matches())
+        if len(query_result_li) > 1 and 'commit' in params:
+            LOG.info(exc.multiple_matches())
             sys.exit(2)
 
-        json_data = json.loads(query_result_li[0])
-        return json_data
+        # return json.loads(query_result_li)
+        return query_result_li
 
     def search(self, address, params):
         """Returns the result of searching the given change."""
-        result = self.query(address, params)
-        if 'project' in result:
-            status = self.colorize_result(result['status'])
-            return status
-        else:
-            return constants.COLORED_STATS['missing']
+        results = []
+        raw_result_li = self.query(address, params)
+
+        for res in raw_result_li:
+            if 'type' not in res and res != '':
+                results.append(self.process_result(res))
+
+        return results
+        # if 'project' in result:
+        #    status = self.colorize_result(result['status'])
+        #    return status
+        # else:
+        #    return constants.COLORED_STATS['missing']
+
+    def process_result(self, result):
+        """Returns adjusted result with only the relevant information."""
+        data = json.loads(result)
+
+        result_str = "Status in project {} branch {} is {}".format(
+            data['project'],
+            data['branch'],
+            self.colorize_result(data['status']))
+
+        return result_str
 
     def colorize_result(self, status):
         return constants.COLORED_STATS[status]

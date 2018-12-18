@@ -12,6 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import importlib
+import logging
+
+LOG = logging.getLogger(__name__)
 
 
 class Link(object):
@@ -25,10 +28,14 @@ class Link(object):
     def load_source(self):
         """Returns source instance based on the link type."""
         source_class = getattr(
-            importlib.import_module("commtrack.sources.{}".format(
+            importlib.import_module("commtrack.links.{}".format(
                 self.ltype)), self.ltype.capitalize())
         return source_class()
 
     def search(self, **params):
-        result = (self.source).search(self.address, params)
-        self.result = result
+        self.results = (self.source).search(self.address, params)
+
+    def print_results(self):
+        LOG.info("{} link results:".format(self.name))
+        for result in self.results:
+            LOG.info(result)
