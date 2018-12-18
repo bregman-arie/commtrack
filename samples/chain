@@ -2,4 +2,4 @@ chain: 'openstack'
 links:
   gerrit:
     ds_gerrit:
-      address: 'code.engineering.redhat.com'
+      address: 'x.y.z.com'

@@ -11,6 +11,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+import crayons
 import importlib
 import logging
 
@@ -36,6 +37,6 @@ class Link(object):
         self.results = (self.source).search(self.address, params)
 
     def print_results(self):
-        LOG.info("{} link results:".format(self.name))
+        LOG.info("{} link results:\n".format(crayons.yellow(self.name, bold=True)))
         for result in self.results:
             LOG.info(result)

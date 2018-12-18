@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-LINKS = [{'name': 'openstack',
+LINKS = [{'name': 'openstack_gerrit',
           'address': 'review.openstack.org',
           'type': 'gerrit'},
          {'name': 'gerrithub',

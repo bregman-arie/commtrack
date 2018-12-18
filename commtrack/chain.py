@@ -30,25 +30,24 @@ class Chain(object):
     def __init__(self, change, links=None, chain_f=None):
         self.change = change
         self.chain_f = chain_f
-        self.load_all_links()
+        self.available_links = self.get_predefined_links()
+        ignore_chain_from_file = False
         # Links can be provided via the configuration file
-        # If provided by CLI they override file 'links'
+        # If provided by CLI they override the links provided via file.
         if links:
-            self.links = self.get_links(links)
+            self.links = self.get_link_instances(links)
+            ignore_chain_from_file = True
+        self.load_links_from_file(ignore_chain_from_file)
 
-    def load_all_links(self):
-        """Loads links from different sources."""
-        self.available_links = dict()
-        self.load_predefined_links()
-        self.load_links_from_file()
-
-    def load_predefined_links(self):
+    def get_predefined_links(self):
         """Loads links defined in the project."""
+        links = dict()
         for link in LINKS:
-            self.add_link(link['name'], link['address'], link['type'])
-        LOG.debug("Loaded predefined links.")
+            links[link['name']] = Link(
+                link['name'], link['address'], link['type'])
+        return links
 
-    def load_links_from_file(self):
+    def load_links_from_file(self, ignore_chain):
         """Loads links from a file describing a chain"""
         chain_f = self.chain_f or self.locate_chain_file()
         chain = None
@@ -56,7 +55,7 @@ class Chain(object):
             with open(chain_f, 'r') as stream:
                 data = yaml.load(stream)
                 for k, v in data.items():
-                    if k == 'chain':
+                    if k == 'chain' and not ignore_chain:
                         chain = v
                     if k == 'links':
                         for link_type, link in v.items():
@@ -65,10 +64,10 @@ class Chain(object):
                                               info['address'],
                                               link_type)
             if chain:
-                self.links = self.get_links(chain)
+                self.links = self.get_link_instances(chain)
             LOG.debug("Loaded data from: {}".format(chain_f))
 
-    def get_links(self, links):
+    def get_link_instances(self, links):
         """Returns list of link objects based on given links names."""
         links_li = []
         # Handle cases where links passed as list or string

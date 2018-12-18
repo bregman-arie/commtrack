@@ -63,7 +63,7 @@ A chain is composed out of links. A link can be one of the following supported t
 
 Name | Type | Description
 :------ |:------:|:--------:
-openstack | Gerrit | OpenStack Gerrit
+openstack_gerrit | Gerrit | OpenStack Gerrit
 gerrithub | Gerrit | GerritHub
 
 
