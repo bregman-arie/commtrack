@@ -95,7 +95,6 @@ class Chain(object):
         for link in self.links:
             LOG.info("\nLooking in {}".format(crayons.yellow(link.name)))
             params = link.search(link.address, self.parameters)
-            print(params)
             self.parameters.update(params)
             link.print_results()
 

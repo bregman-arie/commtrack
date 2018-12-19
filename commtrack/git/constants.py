@@ -15,6 +15,6 @@
 # Note that order is very important since it determines which
 # chain file will be used first in case of multiple matches.
 
-PROJECT_PATHS = ['/tmp/git/', '~/', '~/git/']
+PROJECT_PATHS = ['~', '~/git', '/tmp/git']
 
 LINK_TYPE = 'Git'

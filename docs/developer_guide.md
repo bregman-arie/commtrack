@@ -5,10 +5,14 @@ The guide is written in Q&A format
 
 ## How to add a new type of link?
 
-Links, when not used in context of a chain, known as sources.
-Each type of source is defined in `commtrack/sources` in its own directory.
+Links should be added to `commtrack/links`.
+Each new type of link should inherit from Link class (which is defined in `commtrack/link.py`)
 
-## What method a source class must define?
+Any other related link modules are usually added to a directory named as the link itself.
+For example: there is `commtrack/gerrit/` directory which holds information on gerrit exceptions,
+constants, etc. The link itself is defined in `commtrack/links/gerrit.py`
 
-`search` method - this is the method that performs the
-                  query and and returns the result accordingly.
+
+## How to contribute?
+
+To contribute use pull requests.
