@@ -11,22 +11,10 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import crayons
-import logging
 
-LOG = logging.getLogger(__name__)
+# Note that order is very important since it determines which
+# chain file will be used first in case of multiple matches.
 
+PROJECT_PATHS = ['/tmp/git/', '~/', '~/git/']
 
-class Link(object):
-
-    def __init__(self, name, address, ltype):
-        self.name = name
-        self.address = address
-        self.ltype = ltype.lower()
-        self.results = []
-
-    def print_results(self):
-        LOG.info("\n{} link search results:\n".format(
-            crayons.yellow(self.name, bold=True)))
-        for result in self.results:
-            LOG.info(result)
+LINK_TYPE = 'Git'

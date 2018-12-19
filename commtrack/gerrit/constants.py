@@ -23,3 +23,5 @@ COLORED_STATS = {'MERGED': crayons.green('Merged'),
 PROVIDED_PARAMS = ['project']
 
 PORT = 29418
+
+LINK_TYPE = 'Gerrit'

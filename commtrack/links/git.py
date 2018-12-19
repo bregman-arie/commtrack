@@ -12,16 +12,36 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import logging
+import os
+
+from commtrack.git import constants
+from commtrack.link import Link
 
 LOG = logging.getLogger(__name__)
 
 
-class Git(object):
+class Git(Link):
     """Managing operations on Git based servers."""
 
-    def __init__(self):
-        self.requirements = []
+    def __init__(self, name, address):
+        super(Git, self).__init__(name, address, constants.LINK_TYPE)
+        self.name = name
+        self.address = address
+
+    def locate_project(self, project):
+        """Returns project path.
+
+        If project couldn't be find, return None.
+        """
+        for path in constants.PROJECT_PATHS:
+            if os.path.isdir(path):
+                LOG.debug("Located project {}: {}".format(project, path))
+                return path
+        return
 
     def search(self, address, params):
         """Returns result of the search based on the given change."""
-        return "a", {'b': 2}
+        project_path = self.locate_project(params['project'])
+        if not project_path:
+            pass
+        print(project_path)

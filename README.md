@@ -38,8 +38,11 @@ Note: You don't have to specify links if you are using only commtrack built-in
 chain: 'openstack'
 links:
   gerrit:
-    ds_gerrit:
-      address: 'code.engineering.redhat.com'
+    some_gerrit:
+      address: 'a.b.com'
+  git:
+    my_git:
+      address: 'x.y.com'
 ```
 
 The configuration file should be set in one of the following locations:

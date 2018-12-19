@@ -18,14 +18,18 @@ import sys
 
 from commtrack.gerrit import constants
 from commtrack.gerrit import exceptions as exc
+from commtrack.link import Link
 
 LOG = logging.getLogger(__name__)
 
 
-class Gerrit(object):
+class Gerrit(Link):
     """Managing operations on Gerrit Code review system."""
 
-    def __init__(self):
+    def __init__(self, name, address):
+        super(Gerrit, self).__init__(name, address, constants.LINK_TYPE)
+        self.name = name
+        self.address = address
         # This is used for parameters discovered during the search
         self.parameters = dict()
 
@@ -62,15 +66,14 @@ class Gerrit(object):
 
     def search(self, address, params):
         """Returns the result of searching the given change."""
-        results = []
         raw_result_li = self.query(address, params)
         self.update_link_parameters(raw_result_li)
 
         for res in raw_result_li:
             if 'type' not in res and res != '':
-                results.append(self.process_result(res))
+                self.results.append(self.process_result(res))
 
-        return results, self.parameters
+        return self.parameters
 
     def update_link_parameters(self, raw_data):
         """Update link parameters using data discovered during the query."""

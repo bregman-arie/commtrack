@@ -12,12 +12,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import crayons
+import importlib
 import logging
 import os
 import sys
 import yaml
 
-from commtrack.link import Link
 from commtrack.constants.links import LINKS
 from commtrack.constants.chain import CHAIN_LOCATIONS
 from commtrack.exceptions.usage import missing_link
@@ -38,12 +38,18 @@ class Chain(object):
         if self.links:
             self.links = self.get_link_instances(self.links)
 
+    def get_link_type_class(self, link_type):
+        """Returns specific link class based on give type argument."""
+        return getattr(importlib.import_module(
+            "commtrack.links.{}".format(link_type)), link_type.capitalize())
+
     def get_predefined_links(self):
         """Loads links defined in the project."""
         links = dict()
         for link in LINKS:
-            links[link['name']] = Link(
-                link['name'], link['address'], link['type'])
+            link_type_class = self.get_link_type_class(link['type'])
+            links[link['name']] = link_type_class(name=link['name'],
+                                                  address=link['address'])
         return links
 
     def load_links_from_file(self, ignore_chain):
@@ -80,7 +86,8 @@ class Chain(object):
         return links_li
 
     def add_link(self, name, address, ltype):
-        self.available_links[name] = Link(name, address, ltype)
+        link_type_class = self.get_link_type_class(ltype)
+        self.available_links[name] = link_type_class(name, address)
 
     def run(self):
         """Runs chain link by link."""
@@ -88,6 +95,7 @@ class Chain(object):
         for link in self.links:
             LOG.info("\nLooking in {}".format(crayons.yellow(link.name)))
             params = link.search(link.address, self.parameters)
+            print(params)
             self.parameters.update(params)
             link.print_results()
 
