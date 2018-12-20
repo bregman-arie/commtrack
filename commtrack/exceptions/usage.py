@@ -30,7 +30,7 @@ Usage Examples:
 
 """.format(crayons.red("commtrack --changeid 23231"),
            crayons.red("commtrack --commit 2d4m2 --links openstack"),
-           crayons.red("commtrack --changeid xyz --links openstack --project neutron"),)
+           crayons.red("commtrack --changeid xyz --project neutron"),)
     return message
 
 

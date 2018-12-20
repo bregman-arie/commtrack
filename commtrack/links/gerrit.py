@@ -27,7 +27,8 @@ class Gerrit(Link):
     """Managing operations on Gerrit Code review system."""
 
     def __init__(self, name, address, parameters):
-        super(Gerrit, self).__init__(name, address, constants.LINK_TYPE, parameters)
+        super(Gerrit, self).__init__(name, address,
+                                     constants.LINK_TYPE, parameters)
         # This is used for parameters discovered during the search
         self.parameters = dict()
 

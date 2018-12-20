@@ -19,7 +19,8 @@ from os.path import expanduser
 
 HOME_DIR = expanduser("~")
 
-PROJECT_PATHS = [HOME_DIR, HOME_DIR + '/commtrack', HOME_DIR + '/git', '/tmp/git']
+PROJECT_PATHS = [HOME_DIR, HOME_DIR + '/commtrack',
+                 HOME_DIR + '/git', '/tmp/git']
 
 DEFAULT_PATH = PROJECT_PATHS[0]
 

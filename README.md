@@ -2,10 +2,12 @@
 
 Tracking commits was never easier.
 
+<div align="center"><img src="./docs/commtrack_example.png" alt="commtrack example" width="400"></div><hr />
 
 ## Installation
 
 ```
+git clone https://github.com/bregman-arie/commtrack.git
 cd commtrack
 pipenv install -e .
 ```

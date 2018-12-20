@@ -39,7 +39,8 @@ class Git(Link):
             for sep in const.PROJECT_SEPARATORS:
                 for sub_dir in ['', self.name + '/']:
                     project_name = project.split(sep)[-1]
-                    project_path = "{}/{}{}".format(path, sub_dir, project_name)
+                    project_path = "{}/{}{}".format(
+                        path, sub_dir, project_name)
                     if os.path.isdir(project_path):
                         LOG.info("\nFound local copy of {} at: {}".format(
                             project_name, project_path))
@@ -59,13 +60,15 @@ class Git(Link):
             for sep in const.PROJECT_SEPARATORS:
                 project_name = project.split(sep)[-1]
                 project_url = address + '/' + project_name
-                res = subprocess.run(ls_cmd + [project_url], stdout=subprocess.DEVNULL)
+                res = subprocess.run(ls_cmd + [project_url],
+                                     stdout=subprocess.DEVNULL)
                 if res.returncode == 0:
                     return project_url, project_name
 
     def clone_project(self, address, project):
         git_url, project_name = self.get_git_url(address, project)
-        self.project_path = const.DEFAULT_PATH + '/' + self.name + '/' + project_name
+        self.project_path = const.DEFAULT_PATH
+        + '/' + self.name + '/' + project_name
         clone_cmd = const.CLONE_CMD + [git_url] + [self.projet_path]
         subprocess.run(clone_cmd, stdout=subprocess.DEVNULL)
 
@@ -94,7 +97,8 @@ class Git(Link):
             branch = self.verify_branch(branch)
             self.checkout_branch(branch)
             change_grep_cmd = ["git log | grep {}".format(params['change_id'])]
-            res = subprocess.run(change_grep_cmd, shell=True, cwd=self.project_path,
+            res = subprocess.run(change_grep_cmd, shell=True,
+                                 cwd=self.project_path,
                                  stdout=subprocess.DEVNULL)
             if res.returncode == 0:
                 status = const.COLORED_STATS['merged']
