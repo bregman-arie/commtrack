@@ -14,6 +14,7 @@
 
 # Note that order is very important since it determines which
 # chain file will be used first in case of multiple matches.
+import crayons
 from os.path import expanduser
 
 HOME_DIR = expanduser("~")
@@ -31,3 +32,8 @@ LS_REMOTE_CMD = ['git', 'ls-remote']
 DEFAULT_CLONE_PATH = '~'
 
 PROJECT_SEPARATORS = ['.', '/']
+
+COLORED_STATS = {'merged': crayons.green('Merged'),
+                 'missing': crayons.red('Missing')}
+
+REQUIRED_PARAMS = ['project', 'branch']

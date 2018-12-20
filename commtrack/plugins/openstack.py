@@ -11,3 +11,9 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
+BRANCH_MAP = {'master': 'rhos-14.0-patches',
+              'stable/pike': 'rhos-12.0-patches',
+              'stable/queens': 'rhos-13.0-patches',
+              'stable/rocky': 'rhos-14.0-patches',
+              'stable/ocata': 'rhos-11.0-patches'}

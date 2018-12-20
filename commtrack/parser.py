@@ -34,9 +34,15 @@ def create_parser():
     parser.add_argument('--chain-file', '-f',
                         dest="chain_file",
                         help="Chain file path")
-    parser.add_argument('--plugin', '-p',
+    parser.add_argument('--plugin',
                         dest="plugin",
                         default="openstack",
                         help="The name of the plugin to use.")
+    parser.add_argument('--project', '-p',
+                        dest="project",
+                        help="The name of the project.")
+    parser.add_argument('--branch', '-b',
+                        dest="branch",
+                        help="The name of the branch.")
 
     return parser

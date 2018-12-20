@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import crayons
+import importlib
 import logging
 
 LOG = logging.getLogger(__name__)
@@ -24,6 +25,8 @@ class Link(object):
         self.address = address
         self.ltype = ltype.lower()
         self.parameters = parameters
+        self.plugin = importlib.import_module(
+            "commtrack.plugins.{}".format(self.parameters['plugin']))
         self.results = []
 
     def print_results(self):

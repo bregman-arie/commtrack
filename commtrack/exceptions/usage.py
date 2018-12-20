@@ -24,8 +24,13 @@ Usage Examples:
 
     Track commit in given links:
     $ {1}
+
+    Specify additional parameters like project name:
+    $ {2}
+
 """.format(crayons.red("commtrack --changeid 23231"),
-           crayons.red("commtrack --commit 2d4m2 --links openstack"),)
+           crayons.red("commtrack --commit 2d4m2 --links openstack"),
+           crayons.red("commtrack --changeid xyz --links openstack --project neutron"),)
     return message
 
 

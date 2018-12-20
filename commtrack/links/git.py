@@ -14,8 +14,10 @@
 import logging
 import os
 import subprocess
+import sys
 
 from commtrack.git import constants as const
+from commtrack.git import exceptions as exc
 from commtrack.link import Link
 
 LOG = logging.getLogger(__name__)
@@ -40,7 +42,7 @@ class Git(Link):
                     project_path = "{}/{}{}".format(path, sub_dir, project_name)
                     if os.path.isdir(project_path):
                         LOG.info("\nFound local copy of {} at: {}".format(
-                            project_name, path))
+                            project_name, project_path))
                         return project_path
         return
 
@@ -74,15 +76,44 @@ class Git(Link):
                              stderr=subprocess.DEVNULL)
         if res.returncode != 0:
             # Try to get the branch name from plugin mapping
-            pass
+            if branch in self.plugin.BRANCH_MAP:
+                return self.plugin.BRANCH_MAP[branch]
+            else:
+                print(exc.missing_branch(branch))
+                sys.exit(2)
+
+    def checkout_branch(self, branch):
+        checkout_branch_cmd = 'git checkout ' + branch
+        subprocess.run([checkout_branch_cmd],
+                       shell=True, cwd=self.project_path,
+                       stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
 
     def query(self, params):
         for branch in params['branch']:
             branch = self.verify_branch(branch)
+            self.checkout_branch(branch)
+            change_grep_cmd = ["git log | grep {}".format(params['change_id'])]
+            res = subprocess.run(change_grep_cmd, shell=True, cwd=self.project_path,
+                                 stdout=subprocess.DEVNULL)
+            if res.returncode == 0:
+                status = const.COLORED_STATS['merged']
+            else:
+                status = const.COLORED_STATS['missing']
+            self.results.append("Status in project {} branch {} is: {}".format(
+                self.project_path.split('/')[-1], branch, status))
+
+    def verify_requirements(self):
+        for param in const.REQUIRED_PARAMS:
+            if not self.parameters[param]:
+                print(exc.missing_requirements(param))
+                sys.exit(2)
 
     def search(self, address, params):
         """Returns result of the search based on the given change."""
+        self.verify_requirements()
         self.project_path = self.locate_project(params['project'])
         if not self.project_path:
             self.clone_project(address, params['project'])
-        self.results = self.query(params)
+        self.query(params)
+        return self.parameters
