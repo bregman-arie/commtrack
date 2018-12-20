@@ -14,7 +14,20 @@
 
 # Note that order is very important since it determines which
 # chain file will be used first in case of multiple matches.
+from os.path import expanduser
 
-PROJECT_PATHS = ['~', '~/git', '/tmp/git']
+HOME_DIR = expanduser("~")
+
+PROJECT_PATHS = [HOME_DIR, HOME_DIR + '/commtrack', HOME_DIR + '/git', '/tmp/git']
+
+DEFAULT_PATH = PROJECT_PATHS[0]
 
 LINK_TYPE = 'Git'
+
+CLONE_CMD = ['git', 'clone']
+
+LS_REMOTE_CMD = ['git', 'ls-remote']
+
+DEFAULT_CLONE_PATH = '~'
+
+PROJECT_SEPARATORS = ['.', '/']

@@ -10,7 +10,7 @@ commtrack -c 2142
 
 # Search for change ID in OpenStack Gerrit:
 
-commtrack --changeid t3gq2 --links openstack
+commtrack --changeid t3gq2 --links openstack_gerrit
 ```
 
 ## Configuration

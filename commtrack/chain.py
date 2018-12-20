@@ -49,7 +49,8 @@ class Chain(object):
         for link in LINKS:
             link_type_class = self.get_link_type_class(link['type'])
             links[link['name']] = link_type_class(name=link['name'],
-                                                  address=link['address'])
+                                                  address=link['address'],
+                                                  parameters=self.parameters)
         return links
 
     def load_links_from_file(self, ignore_chain):
@@ -87,7 +88,8 @@ class Chain(object):
 
     def add_link(self, name, address, ltype):
         link_type_class = self.get_link_type_class(ltype)
-        self.available_links[name] = link_type_class(name, address)
+        self.available_links[name] = link_type_class(name, address,
+                                                     self.parameters)
 
     def run(self):
         """Runs chain link by link."""

@@ -26,10 +26,8 @@ LOG = logging.getLogger(__name__)
 class Gerrit(Link):
     """Managing operations on Gerrit Code review system."""
 
-    def __init__(self, name, address):
-        super(Gerrit, self).__init__(name, address, constants.LINK_TYPE)
-        self.name = name
-        self.address = address
+    def __init__(self, name, address, parameters):
+        super(Gerrit, self).__init__(name, address, constants.LINK_TYPE, parameters)
         # This is used for parameters discovered during the search
         self.parameters = dict()
 
@@ -67,20 +65,25 @@ class Gerrit(Link):
     def search(self, address, params):
         """Returns the result of searching the given change."""
         raw_result_li = self.query(address, params)
-        self.update_link_parameters(raw_result_li)
 
         for res in raw_result_li:
             if 'type' not in res and res != '':
+                self.update_link_parameters(res)
                 self.results.append(self.process_result(res))
 
         return self.parameters
 
     def update_link_parameters(self, raw_data):
         """Update link parameters using data discovered during the query."""
-        data = json.loads(raw_data[0])
-        for param in constants.PROVIDED_PARAMS:
+        data = json.loads(raw_data)
+        for param in constants.SINGLE_PROVIDED_PARAMS:
             if param in data:
                 self.parameters[param] = data[param]
+        for param in constants.MULTI_PROVIDED_PARAMS:
+            if param in data:
+                if param not in self.parameters:
+                    self.parameters[param] = list()
+                self.parameters[param].append(data[param])
 
     def process_result(self, result):
         """Returns adjusted result with only the relevant information."""

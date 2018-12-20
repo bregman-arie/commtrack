@@ -19,10 +19,11 @@ LOG = logging.getLogger(__name__)
 
 class Link(object):
 
-    def __init__(self, name, address, ltype):
+    def __init__(self, name, address, ltype, parameters):
         self.name = name
         self.address = address
         self.ltype = ltype.lower()
+        self.parameters = parameters
         self.results = []
 
     def print_results(self):
