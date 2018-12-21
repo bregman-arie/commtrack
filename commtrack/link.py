@@ -14,6 +14,9 @@
 import crayons
 import importlib
 import logging
+import sys
+
+from commtrack.common import exceptions as common_exc
 
 LOG = logging.getLogger(__name__)
 
@@ -34,3 +37,9 @@ class Link(object):
             crayons.yellow(self.name, bold=True)))
         for result in self.results:
             LOG.info(result)
+
+    def verify_requirements(self, required_params):
+        for param in required_params:
+            if not self.parameters[param]:
+                print(common_exc.missing_requirements(param))
+                sys.exit(2)

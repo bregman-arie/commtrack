@@ -107,15 +107,9 @@ class Distgit(Link):
             self.results.append("Status in project {} branch {} is: {}".format(
                 self.project_path.split('/')[-1], branch, status))
 
-    def verify_requirements(self):
-        for param in const.REQUIRED_PARAMS:
-            if not self.parameters[param]:
-                print(exc.missing_requirements(param))
-                sys.exit(2)
-
     def search(self, address, params):
         """Returns result of the search based on the given change."""
-        self.verify_requirements()
+        self.verify_requirements(const.REQUIRED_PARAMS)
         self.project_path = self.locate_project(params['project'])
         if not self.project_path:
             self.clone_project(address, params['project'])
