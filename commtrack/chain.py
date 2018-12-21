@@ -29,14 +29,10 @@ class Chain(object):
 
     def __init__(self, parameters):
         self.parameters = parameters
-        if 'links' in self.parameters:
-            self.links = [item for item in self.parameters['links'].split(',')]
         self.available_links = self.get_predefined_links()
-        # Links can be provided via the configuration file
-        # If provided by CLI they override the links provided via file.
-        self.load_links_from_file(self.links)
-        if self.links:
-            self.links = self.get_link_instances(self.links)
+        self.load_links_from_file(self.parameters['links'])
+        if self.parameters['links']:
+            self.links = self.get_link_instances(self.parameters['links'])
 
     def get_link_type_class(self, link_type):
         """Returns specific link class based on give type argument."""
@@ -62,7 +58,7 @@ class Chain(object):
                 data = yaml.load(stream)
                 for k, v in data.items():
                     if k == 'chain' and not ignore_chain:
-                        chain = v
+                        chain = [item for item in v.split(',')]
                     if k == 'links':
                         for link_type, link in v.items():
                             for link_name, info in link.items():
@@ -77,7 +73,7 @@ class Chain(object):
         """Returns list of link objects based on given links names."""
         links_li = []
         # Handle cases where links passed as list or string
-        links_data = links if isinstance(links, (list,)) else links.split()
+        links_data = links if isinstance(links, (list,)) else links.split(',')
         for link in links_data:
             try:
                 links_li.append(self.available_links[link])

@@ -16,19 +16,18 @@ import os
 import subprocess
 import sys
 
-from commtrack.git import constants as const
-from commtrack.git import exceptions as exc
-from commtrack.common import exceptions as common_exc
+from commtrack.distgit import constants as const
+from commtrack.distgit import exceptions as exc
 from commtrack.link import Link
 
 LOG = logging.getLogger(__name__)
 
 
-class Git(Link):
-    """Managing operations on Git based servers."""
+class Distgit(Link):
+    """Managing operations on Distgit repos."""
 
     def __init__(self, name, address, parameters):
-        super(Git, self).__init__(name, address, const.LINK_TYPE, parameters)
+        super(Distgit, self).__init__(name, address, const.LINK_TYPE, parameters)
         self.git_dir = const.DEFAULT_CLONE_PATH + '/' + self.name
 
     def locate_project(self, project):
@@ -111,7 +110,7 @@ class Git(Link):
     def verify_requirements(self):
         for param in const.REQUIRED_PARAMS:
             if not self.parameters[param]:
-                print(common_exc.missing_requirements(param))
+                print(exc.missing_requirements(param))
                 sys.exit(2)
 
     def search(self, address, params):

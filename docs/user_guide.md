@@ -50,8 +50,17 @@ You can also pass it with `commtrack --conf` or `commtrack --chain`.
 Commtrack is looking for the specified change in what is known as the "Chain".
 A chain is composed out of links. A link can be one of the following supported types:
 
-* Gerrit
-* Git
+Type | Description
+:------:|:--------:
+Gerrit | Code Review System
+Git | Version Control System
+
+Future Support (Work In Progress):
+
+Type | Description
+:------:|:--------:
+Dist-Git | Packaging repo (Located in git system)
+Repository | A collection of packages :)
 
 ## Predefined Links
 

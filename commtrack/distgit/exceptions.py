@@ -30,3 +30,19 @@ This could happen for several reasons:
            crayons.yellow('commtrack --plugin <plugin_name>'),
            crayons.yellow('commtrack/plugins/<plugin_name>'))
     return message
+
+
+def missing_requirements(req):
+    """Display message in case some must-provided requirements are missing."""
+    message = """
+Can't perform search in Git server without the parameter {0}
+
+It can be resolved by:
+
+    1. Specifying the parameter '--{0} <{0}>' with the CLI
+    2. Change chain order if there are additional link types.
+       For example, Gerrit link type provides the parameter {0} to Git without
+       the need to specify it manually
+
+""".format(crayons.red(req))
+    return message

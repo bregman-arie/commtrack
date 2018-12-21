@@ -1,0 +1,25 @@
+CHANGES
+=======
+
+* Modify README
+* Finaliaze the work on git type link
+* Modified user guide
+* Restructure README
+* Add CI
+* Minor bugs fixes
+* Allow passing parameters between links
+* Fix link loading order
+* Add support for multiple results in one link
+* Handle situation of multiple Gerrit qeury results
+* fixed Gerrit source bugs
+* Add help message for missing link
+* Add help message
+* Remove common constants
+* Fix several bugs
+* Finish the work on chain and links strcture
+* a
+* Add predefined links
+* Add predefined links
+* Add chain and link classes
+* Initial structure
+* Initial commit
