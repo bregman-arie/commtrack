@@ -12,8 +12,18 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-BRANCH_MAP = {'master': 'rhos-14.0-patches',
-              'stable/pike': 'rhos-12.0-patches',
-              'stable/queens': 'rhos-13.0-patches',
-              'stable/rocky': 'rhos-14.0-patches',
-              'stable/ocata': 'rhos-11.0-patches'}
+BRANCH_MAP = {'git':
+              {'master': 'rhos-14.0-patches',
+               'stable/pike': 'rhos-12.0-patches',
+               'stable/queens': 'rhos-13.0-patches',
+               'stable/rocky': 'rhos-14.0-patches',
+               'stable/ocata': 'rhos-11.0-patches'},
+              'distgit':
+              {'master': 'rhos-14.0-patches',
+               'stable/pike': 'rhos-12.0-patches',
+               'stable/queens': 'rhos-13.0-patches',
+               'stable/rocky': 'rhos-14.0-patches',
+               'stable/ocata': 'rhos-11.0-patches'},
+              }
+
+REPLACE_CHARS = {'distgit': [('/', '-')]}

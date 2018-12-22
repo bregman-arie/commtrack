@@ -64,12 +64,20 @@ class Distgit(Link):
                                      stdout=subprocess.DEVNULL)
                 if res.returncode == 0:
                     return project_url, project_name
+            for rep in self.plugin.REPLACE_CHARS[self.ltype]:
+                project_name = project.replace(rep[0], rep[1])
+                project_url = address + '/' + project_name
+                print(project_url)
+                res = subprocess.run(ls_cmd + [project_url],
+                                     stdout=subprocess.DEVNULL)
+                if res.returncode == 0:
+                    return project_url, project_name
 
     def clone_project(self, address, project):
         git_url, project_name = self.get_git_url(address, project)
-        self.project_path = const.DEFAULT_PATH
-        + '/' + self.name + '/' + project_name
-        clone_cmd = const.CLONE_CMD + [git_url] + [self.projet_path]
+        self.project_path = (const.DEFAULT_PATH +
+                             '/' + self.name + '/' + project_name)
+        clone_cmd = const.CLONE_CMD + [git_url] + [self.project_path]
         subprocess.run(clone_cmd, stdout=subprocess.DEVNULL)
 
     def verify_branch(self, branch):
@@ -111,7 +119,8 @@ class Distgit(Link):
         """Returns result of the search based on the given change."""
         self.verify_requirements(const.REQUIRED_PARAMS)
         self.project_path = self.locate_project(params['project'])
+        print(self.project_path)
         if not self.project_path:
             self.clone_project(address, params['project'])
         self.query(params)
-        return self.parameters
+        return self.link_params

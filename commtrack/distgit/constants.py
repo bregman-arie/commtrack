@@ -24,7 +24,7 @@ PROJECT_PATHS = [HOME_DIR, HOME_DIR + '/commtrack',
 
 DEFAULT_PATH = PROJECT_PATHS[0]
 
-LINK_TYPE = 'Git'
+LINK_TYPE = 'Distgit'
 
 CLONE_CMD = ['git', 'clone']
 

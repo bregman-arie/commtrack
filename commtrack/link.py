@@ -27,9 +27,10 @@ class Link(object):
         self.name = name
         self.address = address
         self.ltype = ltype.lower()
-        self.parameters = parameters
+        self.chain_params = parameters
+        self.link_params = dict()
         self.plugin = importlib.import_module(
-            "commtrack.plugins.{}".format(self.parameters['plugin']))
+            "commtrack.plugins.{}".format(self.chain_params['plugin']))
         self.results = []
 
     def print_results(self):
@@ -40,6 +41,6 @@ class Link(object):
 
     def verify_requirements(self, required_params):
         for param in required_params:
-            if not self.parameters[param]:
+            if not self.chain_params[param]:
                 print(common_exc.missing_requirements(param))
                 sys.exit(2)

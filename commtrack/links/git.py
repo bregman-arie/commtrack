@@ -69,7 +69,7 @@ class Git(Link):
         git_url, project_name = self.get_git_url(address, project)
         self.project_path = const.DEFAULT_PATH
         + '/' + self.name + '/' + project_name
-        clone_cmd = const.CLONE_CMD + [git_url] + [self.projet_path]
+        clone_cmd = const.CLONE_CMD + [git_url] + [self.project_path]
         subprocess.run(clone_cmd, stdout=subprocess.DEVNULL)
 
     def verify_branch(self, branch):
@@ -79,8 +79,8 @@ class Git(Link):
                              stderr=subprocess.DEVNULL)
         if res.returncode != 0:
             # Try to get the branch name from plugin mapping
-            if branch in self.plugin.BRANCH_MAP:
-                return self.plugin.BRANCH_MAP[branch]
+            if branch in self.plugin.BRANCH_MAP[self.ltype]:
+                return self.plugin.BRANCH_MAP[self.ltype][branch]
             else:
                 print(exc.missing_branch(branch))
                 sys.exit(2)
@@ -114,4 +114,4 @@ class Git(Link):
         if not self.project_path:
             self.clone_project(address, params['project'])
         self.query(params)
-        return self.parameters
+        return self.link_params
