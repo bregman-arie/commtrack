@@ -13,6 +13,7 @@
 #    under the License.
 import logging
 import os
+import re
 import subprocess
 import sys
 
@@ -38,13 +39,16 @@ class Distgit(Link):
         for path in const.PROJECT_PATHS:
             for sep in const.PROJECT_SEPARATORS:
                 for sub_dir in ['', self.name + '/']:
-                    project_name = project.split(sep)[-1]
-                    project_path = "{}/{}{}".format(
-                        path, sub_dir, project_name)
-                    if os.path.isdir(project_path):
-                        LOG.info("\nFound local copy of {} at: {}".format(
-                            project_name, project_path))
-                        return project_path
+                    for rep in self.plugin.REPLACE_CHARS[self.ltype]:
+                        project_name = project.split(sep)[-1]
+                        project_name = project.replace(rep[0], rep[1])
+                        project_path = "{}/{}{}".format(
+                            path, sub_dir, project_name)
+                        if os.path.isdir(project_path):
+                            LOG.info("\nFound local copy of {} at: {}".format(
+                                project_name, project_path))
+                            self.params['project_name'] = project_name
+                            return project_path
         return
 
     def get_git_url(self, address, project):
@@ -67,7 +71,6 @@ class Distgit(Link):
             for rep in self.plugin.REPLACE_CHARS[self.ltype]:
                 project_name = project.replace(rep[0], rep[1])
                 project_url = address + '/' + project_name
-                print(project_url)
                 res = subprocess.run(ls_cmd + [project_url],
                                      stdout=subprocess.DEVNULL)
                 if res.returncode == 0:
@@ -81,17 +84,24 @@ class Distgit(Link):
         subprocess.run(clone_cmd, stdout=subprocess.DEVNULL)
 
     def verify_branch(self, branch):
-        verify_branch_cmd = 'git rev-parse --verify ' + branch
-        res = subprocess.run([verify_branch_cmd],
-                             shell=True, cwd=self.project_path,
-                             stderr=subprocess.DEVNULL)
-        if res.returncode != 0:
-            # Try to get the branch name from plugin mapping
-            if branch in self.plugin.BRANCH_MAP:
-                return self.plugin.BRANCH_MAP[branch]
+        if branch in self.plugin.BRANCH_MAP[self.ltype]:
+            new_branch = self.plugin.BRANCH_MAP[self.ltype][branch]
+            verify_branch_cmd = 'git rev-parse --verify ' + new_branch
+            res = subprocess.run([verify_branch_cmd],
+                                 shell=True, cwd=self.project_path,
+                                 stderr=subprocess.DEVNULL,
+                                 stdout=subprocess.DEVNULL)
+            if res.returncode == 0:
+                return new_branch
             else:
-                print(exc.missing_branch(branch))
-                sys.exit(2)
+                verify_branch_cmd = 'git rev-parse --verify ' + branch
+                res = subprocess.run([verify_branch_cmd],
+                                     shell=True, cwd=self.project_path,
+                                     stderr=subprocess.DEVNULL,
+                                     stdout=subprocess.DEVNULL)
+                if res.returncode != 0:
+                    print(exc.missing_branch(branch))
+                    sys.exit(2)
 
     def checkout_branch(self, branch):
         checkout_branch_cmd = 'git checkout ' + branch
@@ -100,27 +110,44 @@ class Distgit(Link):
                        stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL)
 
+    def locate_spec(self):
+        spec_path = (self.project_path + '/' + self.params['project_name'] +
+                     '.spec')
+        if os.path.isfile(spec_path):
+            return spec_path
+
     def query(self, params):
+        spec_path = self.locate_spec()
         for branch in params['branch']:
             branch = self.verify_branch(branch)
             self.checkout_branch(branch)
-            change_grep_cmd = ["git log | grep {}".format(params['change_id'])]
-            res = subprocess.run(change_grep_cmd, shell=True,
-                                 cwd=self.project_path,
-                                 stdout=subprocess.DEVNULL)
-            if res.returncode == 0:
+            with open(spec_path) as f:
+                subject = None
+                line = f.readline()
+                while line and not subject:
+                    ver_m = re.search(r'((\d+\.)+\d+(\-\d+))', line)
+                    sub_m = re.search(self.chain_params['subject'], line)
+                    if ver_m:
+                        version = ver_m.group(1)
+                    if sub_m:
+                        subject = True
+                    line = f.readline()
+            if subject:
                 status = const.COLORED_STATS['merged']
+                self.results.append(
+                    "Status in project {} branch {} version {} is: {}".format(
+                        self.project_path.split('/')[-1], branch, version, status))
             else:
                 status = const.COLORED_STATS['missing']
-            self.results.append("Status in project {} branch {} is: {}".format(
-                self.project_path.split('/')[-1], branch, status))
+                self.results.append(
+                    "Status in project {} branch {} is: {}".format(
+                        self.project_path.split('/')[-1], branch, status))
 
     def search(self, address, params):
         """Returns result of the search based on the given change."""
         self.verify_requirements(const.REQUIRED_PARAMS)
         self.project_path = self.locate_project(params['project'])
-        print(self.project_path)
         if not self.project_path:
             self.clone_project(address, params['project'])
         self.query(params)
-        return self.link_params
+        return self.params

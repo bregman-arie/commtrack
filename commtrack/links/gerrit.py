@@ -70,19 +70,19 @@ class Gerrit(Link):
                 self.update_link_params(res)
                 self.results.append(self.process_result(res))
 
-        return self.link_params
+        return self.params
 
     def update_link_params(self, raw_data):
         """Update link parameters using data discovered during the query."""
         data = json.loads(raw_data)
         for param in constants.SINGLE_PROVIDED_PARAMS:
             if param in data:
-                self.link_params[param] = data[param]
+                self.params[param] = data[param]
         for param in constants.MULTI_PROVIDED_PARAMS:
             if param in data:
-                if param not in self.link_params:
-                    self.link_params[param] = list()
-                self.link_params[param].append(data[param])
+                if param not in self.params:
+                    self.params[param] = list()
+                self.params[param].append(data[param])
 
     def process_result(self, result):
         """Returns adjusted result with only the relevant information."""

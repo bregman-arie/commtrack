@@ -37,4 +37,4 @@ PROJECT_SEPARATORS = ['.', '/']
 COLORED_STATS = {'merged': crayons.green('Merged'),
                  'missing': crayons.red('Missing')}
 
-REQUIRED_PARAMS = ['project', 'branch']
+REQUIRED_PARAMS = ['project', 'branch', 'subject']

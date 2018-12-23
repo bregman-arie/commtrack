@@ -114,4 +114,4 @@ class Git(Link):
         if not self.project_path:
             self.clone_project(address, params['project'])
         self.query(params)
-        return self.link_params
+        return self.params

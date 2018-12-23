@@ -19,11 +19,11 @@ BRANCH_MAP = {'git':
                'stable/rocky': 'rhos-14.0-patches',
                'stable/ocata': 'rhos-11.0-patches'},
               'distgit':
-              {'master': 'rhos-14.0-patches',
-               'stable/pike': 'rhos-12.0-patches',
-               'stable/queens': 'rhos-13.0-patches',
-               'stable/rocky': 'rhos-14.0-patches',
-               'stable/ocata': 'rhos-11.0-patches'},
+              {'master': 'origin/rhos-14.0-rhel-7',
+               'stable/pike': 'origin/rhos-12.0-rhel-7',
+               'stable/queens': 'origin/rhos-13.0-rhel-7',
+               'stable/rocky': 'origin/rhos-14.0-rhel-7',
+               'stable/ocata': 'origin/rhos-11.0-rhel-7'},
               }
 
-REPLACE_CHARS = {'distgit': [('/', '-')]}
+REPLACE_CHARS = {'distgit': [('/', '-'), ('', '')]}

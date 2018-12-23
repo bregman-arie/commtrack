@@ -20,7 +20,7 @@ COLORED_STATS = {'MERGED': crayons.green('Merged'),
                  'NEW': crayons.blue('In Review'),
                  'missing': crayons.red('Not Found')}
 
-SINGLE_PROVIDED_PARAMS = ['project']
+SINGLE_PROVIDED_PARAMS = ['project', 'subject']
 MULTI_PROVIDED_PARAMS = ['branch']
 
 PORT = 29418
