@@ -20,6 +20,7 @@ import sys
 from commtrack.distgit import constants as const
 from commtrack.distgit import exceptions as exc
 from commtrack.link import Link
+from commtrack.locator import Locator
 
 LOG = logging.getLogger(__name__)
 
@@ -29,7 +30,8 @@ class Distgit(Link):
 
     def __init__(self, name, address, parameters):
         super(Distgit, self).__init__(name, address, const.LINK_TYPE, parameters)
-        self.git_dir = const.DEFAULT_CLONE_PATH + '/' + self.name
+        self.locator = Locator(paths=const.PROJECT_PATHS, sub_dirs=[self.name],
+                               separators=const.PROJECT_SEPARATORS)
 
     def locate_project(self, project):
         """Returns project path.
@@ -145,9 +147,10 @@ class Distgit(Link):
 
     def search(self):
         """Returns result of the search based on the given change."""
-        self.verify_requirements(const.REQUIRED_PARAMS)
-        self.project_path = self.locate_project(params['project'])
-        if not self.project_path:
-            self.clone_project(address, params['project'])
-        self.query(params)
-        return self.params
+        self.verify_and_set_reqs(const.REQUIRED_PARAMS)
+        self.params['project_path'] = self.locator.locate_local_project(
+            self.params['project'])
+        if not self.params['project_path']:
+            self.clone_project()
+            for branch in self.params['branch']:
+                self.query_branch(branch)

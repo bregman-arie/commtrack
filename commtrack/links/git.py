@@ -19,6 +19,7 @@ import sys
 from commtrack.git import constants as const
 from commtrack.git import exceptions as exc
 from commtrack.link import Link
+from commtrack.locator import Locator
 
 LOG = logging.getLogger(__name__)
 
@@ -28,34 +29,19 @@ class Git(Link):
 
     def __init__(self, name, address, parameters):
         super(Git, self).__init__(name, address, const.LINK_TYPE, parameters)
-        self.git_dir = const.DEFAULT_CLONE_PATH + '/' + self.name
+        self.locator = Locator(paths=const.PROJECT_PATHS, sub_dirs=[self.name],
+                               separators=const.PROJECT_SEPARATORS)
 
-    def locate_project(self, project):
-        """Returns project path.
-
-        If project couldn't be find, return None.
-        """
-        for path in const.PROJECT_PATHS:
-            for sep in const.PROJECT_SEPARATORS:
-                for sub_dir in ['', self.name + '/']:
-                    project_name = project.split(sep)[-1]
-                    project_path = "{}/{}{}".format(
-                        path, sub_dir, project_name)
-                    if os.path.isdir(project_path):
-                        LOG.info("\nFound local copy of {} at: {}".format(
-                            project_name, project_path))
-                        return project_path
-        return
-
-    def get_git_url(self, address, project):
+    def get_git_url(self):
         """Returns working git URL based on project name and predefined
         separators."""
-        repo_url = address + '/' + project
+        self.locator.locate_remote_git(self.address, self.params['project'])
+        repo_url = os.path.join(self.address, self.params['project'])
         ls_cmd = const.LS_REMOTE_CMD
         res = subprocess.run(ls_cmd + [repo_url], stderr=subprocess.DEVNULL,
                              stdout=subprocess.DEVNULL)
         if res.returncode == 0:
-            return repo_url, project
+            return repo_url
         else:
             for sep in const.PROJECT_SEPARATORS:
                 project_name = project.split(sep)[-1]
@@ -65,8 +51,8 @@ class Git(Link):
                 if res.returncode == 0:
                     return project_url, project_name
 
-    def clone_project(self, address, project):
-        git_url, project_name = self.get_git_url(address, project)
+    def clone_project(self):
+        git_url, project_name = self.get_git_url()
         self.project_path = const.DEFAULT_PATH
         + '/' + self.name + '/' + project_name
         clone_cmd = const.CLONE_CMD + [git_url] + [self.project_path]
@@ -75,7 +61,7 @@ class Git(Link):
     def verify_branch(self, branch):
         verify_branch_cmd = 'git rev-parse --verify ' + branch
         res = subprocess.run([verify_branch_cmd],
-                             shell=True, cwd=self.project_path,
+                             shell=True, cwd=self.params['project_path'],
                              stderr=subprocess.DEVNULL)
         if res.returncode != 0:
             # Try to get the branch name from plugin mapping
@@ -88,30 +74,40 @@ class Git(Link):
     def checkout_branch(self, branch):
         checkout_branch_cmd = 'git checkout ' + branch
         subprocess.run([checkout_branch_cmd],
-                       shell=True, cwd=self.project_path,
+                       shell=True, cwd=self.params['project_path'],
                        stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL)
 
-    def query(self, params):
-        for branch in params['branch']:
-            branch = self.verify_branch(branch)
-            self.checkout_branch(branch)
-            change_grep_cmd = ["git log | grep {}".format(params['change_id'])]
-            res = subprocess.run(change_grep_cmd, shell=True,
-                                 cwd=self.project_path,
-                                 stdout=subprocess.DEVNULL)
-            if res.returncode == 0:
-                status = const.COLORED_STATS['merged']
-            else:
-                status = const.COLORED_STATS['missing']
-            self.results.append("Status in project {} branch {} is: {}".format(
-                self.project_path.split('/')[-1], branch, status))
+    def grep_change(self, change):
+        """Checks if change is part of the project."""
+        change_grep_cmd = ["git log | grep {}".format(change)]
+        res = subprocess.run(change_grep_cmd, shell=True,
+                             cwd=self.params['project_path'],
+                             stdout=subprocess.DEVNULL)
+        return res
+
+    def append_result(self, res, branch):
+        """Append customized result based on given result."""
+        if res.returncode == 0:
+            status = const.COLORED_STATS['merged']
+        else:
+            status = const.COLORED_STATS['missing']
+        self.results.append("Status in project {} branch {} is: {}".format(
+            self.params['project_path'].split('/')[-1], branch, status))
+
+    def query_branch(self, branch):
+        # Make sure branch exists
+        branch = self.verify_branch(branch)
+        self.checkout_branch(branch)
+        res = self.grep_change(self.params['change_id'])
+        self.append_result(res, branch)
 
     def search(self):
         """Returns result of the search based on the given change."""
-        self.verify_requirements(const.REQUIRED_PARAMS)
-        self.project_path = self.locate_project(self.chain_params['global']['project'])
-        if not self.project_path:
+        self.verify_and_set_reqs(const.REQUIRED_PARAMS)
+        self.params['project_path'] = self.locator.locate_local_project(
+            self.params['project'])
+        if not self.params['project_path']:
             self.clone_project()
-        self.query()
-        return self.params
+        for branch in self.params['branch']:
+            self.query_branch(branch)

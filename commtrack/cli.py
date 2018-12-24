@@ -16,7 +16,6 @@ import sys
 
 import commtrack.parser as app_parser
 from commtrack.chain import Chain
-from commtrack.exceptions.usage import general_usage
 
 LOG = logging.getLogger(__name__)
 
@@ -28,15 +27,6 @@ def setup_logging(debug):
     logging.basicConfig(level=level, format=format)
 
 
-def verify_input(args):
-    """Verifies user provided at least one of the required arguments for
-    tracking a change.
-    """
-    if not args.commit and not args.change_id and not args.subject:
-        LOG.info(general_usage())
-        sys.exit(2)
-
-
 def main():
     """Main Entry."""
     # Parse arguments provided by the user
@@ -44,7 +34,6 @@ def main():
     args = parser.parse_args()
 
     setup_logging(args.debug)
-    verify_input(args)
 
     # Create a chain and execute it
     chain = Chain(vars(args))

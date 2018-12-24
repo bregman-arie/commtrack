@@ -39,16 +39,39 @@ class Link(object):
         for result in self.results:
             LOG.info(result)
 
-    def verify_requirements(self, required_params):
-        for param in required_params:
-            if not self.chain_params['global'][param]:
-                exists = False
-                for k, v in self.chain_params.items():
-                    if param in v:
-                        exists = True
-        if not exists:
-            print(common_exc.missing_requirements(param))
+    def check_param_is_defined(self, param):
+        if not self.chain_params['global'][param]:
+            for k, v in self.chain_params.items():
+                if param in v and v[param]:
+                    self.params[param] = v[param]
+                    return True
+        else:
+            self.params[param] = self.chain_params['global'][param]
+            return True
+
+    def verify_at_least_one_provided(self, params):
+        one_defined = False
+        for param in params:
+            exists = self.check_param_is_defined(param)
+            if exists:
+                one_defined = True
+        if not one_defined:
+            print(common_exc.provide_at_least_one_param(params))
             sys.exit(2)
+
+    def verify_and_set_reqs(self, required_params):
+        """Sets mandatory parameters required by the link to perform
+
+        successful search.
+        """
+        for param in required_params:
+            if isinstance(param, list):
+                self.verify_at_least_one_provided(param)
+            else:
+                exists = self.check_param_is_defined(param)
+                if not exists:
+                    print(common_exc.missing_requirements(param))
+                    sys.exit(2)
 
     def set_parameters(self, params):
         self.chain_params = params
