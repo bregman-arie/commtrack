@@ -15,6 +15,6 @@
 # Note that order is very important since it determines which
 # chain file will be used first in case of multiple matches.
 
-REQUIRED_PARAMS = ['project']
+REQUIRED_PARAMS = ['project', 'versions']
 
 LINK_TYPE = 'Repository'

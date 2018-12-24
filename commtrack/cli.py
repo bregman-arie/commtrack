@@ -32,7 +32,7 @@ def verify_input(args):
     """Verifies user provided at least one of the required arguments for
     tracking a change.
     """
-    if not args.commit and not args.change_id:
+    if not args.commit and not args.change_id and not args.subject:
         LOG.info(general_usage())
         sys.exit(2)
 

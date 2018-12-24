@@ -107,11 +107,11 @@ class Git(Link):
             self.results.append("Status in project {} branch {} is: {}".format(
                 self.project_path.split('/')[-1], branch, status))
 
-    def search(self, address, params):
+    def search(self):
         """Returns result of the search based on the given change."""
         self.verify_requirements(const.REQUIRED_PARAMS)
-        self.project_path = self.locate_project(params['project'])
+        self.project_path = self.locate_project(self.chain_params['global']['project'])
         if not self.project_path:
-            self.clone_project(address, params['project'])
-        self.query(params)
+            self.clone_project()
+        self.query()
         return self.params

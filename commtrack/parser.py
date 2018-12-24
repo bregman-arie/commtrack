@@ -44,5 +44,8 @@ def create_parser():
     parser.add_argument('--branch', '-b',
                         dest="branch",
                         help="The name of the branch.")
+    parser.add_argument('--subject', '-s',
+                        dest="subject",
+                        help="The subject of the commit message.")
 
     return parser

@@ -41,29 +41,29 @@ class Gerrit(Link):
                 'limit:5',
                 '--format JSON']
 
-    def query(self, address, params):
+    def query(self):
         """Returns query result"""
 
-        query_cmd = self.get_basic_query_cmd(address)
+        query_cmd = self.get_basic_query_cmd(self.address)
 
-        if params['change_id']:
-            query_cmd.append('change:{}'.format(params['change_id']))
+        if self.chain_params['global']['change_id']:
+            query_cmd.append('change:{}'.format(self.chain_params['global']['change_id']))
 
         output = subprocess.check_output(query_cmd)
         decoded_output = output.decode('utf-8')
         query_result_li = decoded_output.split('\n')
 
         # Handle multiple matches
-        if len(query_result_li) > 1 and params['commit']:
+        if len(query_result_li) > 1 and self.chain_params['global']['commit']:
             LOG.info(exc.multiple_matches())
             sys.exit(2)
 
         # return json.loads(query_result_li)
         return query_result_li
 
-    def search(self, address, params):
+    def search(self):
         """Returns the result of searching the given change."""
-        raw_result_li = self.query(address, params)
+        raw_result_li = self.query()
 
         for res in raw_result_li:
             if 'type' not in res and res != '':

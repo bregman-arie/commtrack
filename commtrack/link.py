@@ -30,7 +30,7 @@ class Link(object):
         self.chain_params = parameters
         self.params = dict()
         self.plugin = importlib.import_module(
-            "commtrack.plugins.{}".format(self.chain_params['plugin']))
+            "commtrack.plugins.{}".format(self.chain_params['global']['plugin']))
         self.results = []
 
     def print_results(self):
@@ -41,6 +41,14 @@ class Link(object):
 
     def verify_requirements(self, required_params):
         for param in required_params:
-            if not self.chain_params[param]:
-                print(common_exc.missing_requirements(param))
-                sys.exit(2)
+            if not self.chain_params['global'][param]:
+                exists = False
+                for k, v in self.chain_params.items():
+                    if param in v:
+                        exists = True
+        if not exists:
+            print(common_exc.missing_requirements(param))
+            sys.exit(2)
+
+    def set_parameters(self, params):
+        self.chain_params = params

@@ -28,11 +28,11 @@ LOG = logging.getLogger(__name__)
 class Chain(object):
 
     def __init__(self, parameters):
-        self.parameters = parameters
+        self.parameters = {'global': parameters}
         self.available_links = self.get_predefined_links()
-        self.load_links_from_file(self.parameters['links'])
-        if self.parameters['links']:
-            self.links = self.get_link_instances(self.parameters['links'])
+        self.load_links_from_file(self.parameters['global']['links'])
+        if self.parameters['global']['links']:
+            self.links = self.get_link_instances(self.parameters['global']['links'])
 
     def get_link_type_class(self, link_type):
         """Returns specific link class based on give type argument."""
@@ -51,7 +51,7 @@ class Chain(object):
 
     def load_links_from_file(self, ignore_chain):
         """Loads links from a file describing a chain"""
-        chain_f = self.parameters['chain_file'] or self.locate_chain_file()
+        chain_f = self.parameters['global']['chain_file'] or self.locate_chain_file()
         chain = None
         if chain_f:
             with open(chain_f, 'r') as stream:
@@ -89,11 +89,12 @@ class Chain(object):
 
     def run(self):
         """Runs chain link by link."""
-        LOG.info("Tracking {}".format(self.parameters['change_id']))
+        LOG.info("Tracking {}".format(self.parameters['global']['change_id']))
         for link in self.links:
+            link.set_parameters(self.parameters)
             LOG.info("\nLooking in {}".format(crayons.yellow(link.name)))
-            params = link.search(link.address, self.parameters)
-            self.parameters.update(params)
+            link_params = link.search()
+            self.parameters[link.name] = link_params
             link.print_results()
 
     @staticmethod

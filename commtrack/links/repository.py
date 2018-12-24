@@ -23,7 +23,9 @@ class Repository(Link):
     """Repository Link."""
 
     def __init__(self, name, address, parameters):
-        super(Repository, self).__init__(name, address, const.LINK_TYPE, parameters)
+        super(Repository, self).__init__(name, address,
+                                         const.LINK_TYPE, parameters)
 
     def search(self):
+        self.verify_requirements()
         pass
