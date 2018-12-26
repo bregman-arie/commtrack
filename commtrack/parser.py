@@ -15,37 +15,53 @@
 import argparse
 
 
+def create_list_parser(subparsers, pparser):
+    """The parser for sub command 'list'."""
+    list_parser = subparsers.add_parser("list", parents=[pparser])
+    list_parser.add_argument('--links', '-l',
+                             dest="list_links",
+                             help='List all available and chosen links.')
+
+
 def create_parser():
     """Returns argument parser"""
 
-    parser = argparse.ArgumentParser(add_help=True)
+    # Top level parser
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    main_parser = argparse.ArgumentParser()
 
-    parser.add_argument('--debug', '-d', action='store_true',
-                        dest="debug", help='Turn on debug')
-    parser.add_argument('--links', '-l',
-                        dest="links",
-                        help='The name of the links the chain consists of')
-    parser.add_argument('--changeid', '-ci',
-                        dest="change_id",
-                        help='The change ID to track')
-    parser.add_argument('--commit', '-c',
-                        dest="commit",
-                        help='The commit hash to track')
-    parser.add_argument('--chain-file', '-f',
-                        dest="chain_file",
-                        help="Chain file path")
-    parser.add_argument('--plugin',
-                        dest="plugin",
-                        default="openstack",
-                        help="The name of the plugin to use.")
-    parser.add_argument('--project', '-p',
-                        dest="project",
-                        help="The name of the project.")
-    parser.add_argument('--branch', '-b',
-                        dest="branch",
-                        help="The name of the branch.")
-    parser.add_argument('--subject', '-s',
-                        dest="subject",
-                        help="The subject of the commit message.")
+    main_parser.add_argument('--debug', '-d', action='store_true',
+                             dest="debug", help='Turn on debug')
+    main_parser.add_argument('--links', '-l',
+                             dest="links",
+                             help='The name of the links the chain consists of')
+    main_parser.add_argument('--changeid', '-ci',
+                             dest="change_id",
+                             help='The change ID to track')
+    main_parser.add_argument('--commit', '-c',
+                             dest="commit",
+                             help='The commit hash to track')
+    main_parser.add_argument('--chain-file', '-f',
+                             dest="chain_file",
+                             help="Chain file path")
+    main_parser.add_argument('--plugin',
+                             dest="plugin",
+                             default="openstack",
+                             help="The name of the plugin to use.")
+    main_parser.add_argument('--project', '-p',
+                             dest="project",
+                             help="The name of the project.")
+    main_parser.add_argument('--branch', '-b',
+                             dest="branch",
+                             nargs='+',
+                             help="The name of the branch.")
+    main_parser.add_argument('--subject', '-s',
+                             dest="subject",
+                             help="The subject of the commit message.")
 
-    return parser
+    action_subparsers = main_parser.add_subparsers(
+        title="sub-actions", dest="main_command")
+
+    create_list_parser(action_subparsers, parent_parser)
+
+    return main_parser

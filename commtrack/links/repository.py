@@ -27,5 +27,5 @@ class Repository(Link):
                                          const.LINK_TYPE, parameters)
 
     def search(self):
-        self.verify_requirements()
+        self.verify_and_set_reqs(const.REQUIRED_PARAMS)
         pass

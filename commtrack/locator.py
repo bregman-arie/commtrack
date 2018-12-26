@@ -57,4 +57,9 @@ class Locator(object):
             res = self.local_search(project_name)
             if res:
                 return res
+        for rep in self.replacers:
+            project_name = project.replace(rep[0], rep[1])
+            res = self.local_search(project_name)
+            if res:
+                return res
         return None

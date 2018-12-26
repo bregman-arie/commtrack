@@ -48,3 +48,15 @@ It can be resolved by:
 
 """.format(crayons.red(req))
     return message
+
+
+def provide_at_least_one_param(link_name, params):
+    """Message that asks to provide at least one out of several required params."""
+    message = """
+Can't perform search in {0} without providing {1} of the following:
+
+{2}
+""".format(crayons.yellow(link_name),
+           crayons.red("at least one"),
+           crayons.red("\n".join(params)))
+    return message

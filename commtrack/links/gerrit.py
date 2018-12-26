@@ -16,7 +16,7 @@ import logging
 import subprocess
 import sys
 
-from commtrack.gerrit import constants
+from commtrack.gerrit import constants as const
 from commtrack.gerrit import exceptions as exc
 from commtrack.link import Link
 
@@ -28,7 +28,7 @@ class Gerrit(Link):
 
     def __init__(self, name, address, parameters):
         super(Gerrit, self).__init__(name, address,
-                                     constants.LINK_TYPE, parameters)
+                                     const.LINK_TYPE, parameters)
 
     def get_basic_query_cmd(self, address):
         """Returns a very basic query command which extended based
@@ -63,6 +63,7 @@ class Gerrit(Link):
 
     def search(self):
         """Returns the result of searching the given change."""
+        self.verify_and_set_reqs(const.REQUIRED_PARAMS)
         raw_result_li = self.query()
 
         for res in raw_result_li:
@@ -75,10 +76,10 @@ class Gerrit(Link):
     def update_link_params(self, raw_data):
         """Update link parameters using data discovered during the query."""
         data = json.loads(raw_data)
-        for param in constants.SINGLE_PROVIDED_PARAMS:
+        for param in const.SINGLE_PROVIDED_PARAMS:
             if param in data:
                 self.params[param] = data[param]
-        for param in constants.MULTI_PROVIDED_PARAMS:
+        for param in const.MULTI_PROVIDED_PARAMS:
             if param in data:
                 if param not in self.params:
                     self.params[param] = list()
@@ -96,4 +97,4 @@ class Gerrit(Link):
         return result_str
 
     def colorize_result(self, status):
-        return constants.COLORED_STATS[status]
+        return const.COLORED_STATS[status]

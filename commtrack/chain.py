@@ -89,12 +89,11 @@ class Chain(object):
 
     def run(self):
         """Runs chain link by link."""
-        LOG.info("Tracking {}".format(self.parameters['global']['change_id']))
         for link in self.links:
-            link.set_parameters(self.parameters)
             LOG.info("\nLooking in {}".format(crayons.yellow(link.name)))
             link_params = link.search()
             self.parameters[link.name] = link_params
+            link.set_parameters(self.parameters)
             link.print_results()
 
     @staticmethod

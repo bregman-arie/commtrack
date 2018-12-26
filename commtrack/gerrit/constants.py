@@ -26,3 +26,5 @@ MULTI_PROVIDED_PARAMS = ['branch']
 PORT = 29418
 
 LINK_TYPE = 'Gerrit'
+
+REQUIRED_PARAMS = [['change_id', 'commit', 'subject']]

@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import logging
-import os
+import re
 import subprocess
 import sys
 
@@ -31,25 +31,7 @@ class Git(Link):
         super(Git, self).__init__(name, address, const.LINK_TYPE, parameters)
         self.locator = Locator(paths=const.PROJECT_PATHS, sub_dirs=[self.name],
                                separators=const.PROJECT_SEPARATORS)
-
-    def get_git_url(self):
-        """Returns working git URL based on project name and predefined
-        separators."""
-        self.locator.locate_remote_git(self.address, self.params['project'])
-        repo_url = os.path.join(self.address, self.params['project'])
-        ls_cmd = const.LS_REMOTE_CMD
-        res = subprocess.run(ls_cmd + [repo_url], stderr=subprocess.DEVNULL,
-                             stdout=subprocess.DEVNULL)
-        if res.returncode == 0:
-            return repo_url
-        else:
-            for sep in const.PROJECT_SEPARATORS:
-                project_name = project.split(sep)[-1]
-                project_url = address + '/' + project_name
-                res = subprocess.run(ls_cmd + [project_url],
-                                     stdout=subprocess.DEVNULL)
-                if res.returncode == 0:
-                    return project_url, project_name
+        self.params['commit'] = self.params['tags'] = dict()
 
     def clone_project(self):
         git_url, project_name = self.get_git_url()
@@ -62,7 +44,8 @@ class Git(Link):
         verify_branch_cmd = 'git rev-parse --verify ' + branch
         res = subprocess.run([verify_branch_cmd],
                              shell=True, cwd=self.params['project_path'],
-                             stderr=subprocess.DEVNULL)
+                             stderr=subprocess.DEVNULL,
+                             stdout=subprocess.DEVNULL)
         if res.returncode != 0:
             # Try to get the branch name from plugin mapping
             if branch in self.plugin.BRANCH_MAP[self.ltype]:
@@ -70,6 +53,8 @@ class Git(Link):
             else:
                 print(exc.missing_branch(branch))
                 sys.exit(2)
+        else:
+            return branch
 
     def checkout_branch(self, branch):
         checkout_branch_cmd = 'git checkout ' + branch
@@ -80,15 +65,32 @@ class Git(Link):
 
     def grep_change(self, change):
         """Checks if change is part of the project."""
-        change_grep_cmd = ["git log | grep {}".format(change)]
+        change_grep_cmd = ["git --no-pager log --grep={}".format(change)]
         res = subprocess.run(change_grep_cmd, shell=True,
                              cwd=self.params['project_path'],
-                             stdout=subprocess.DEVNULL)
+                             stdout=subprocess.PIPE)
         return res
+
+    def get_commit(self, text):
+        """Returns commit from given text."""
+        commit_re = re.search(r'\b[0-9a-f]{5,40}\b', text)
+        return commit_re.group(0)
+
+    def get_tag(self, commit):
+        """Returns tag from given commit."""
+        get_tag_cmd = ['git --no-pager tag --contains {} | head -n 1'.format(commit)]
+        res = subprocess.run(get_tag_cmd, shell=True,
+                             cwd=self.params['project_path'],
+                             stdout=subprocess.PIPE)
+        return res.stdout.strip()
 
     def append_result(self, res, branch):
         """Append customized result based on given result."""
         if res.returncode == 0:
+            self.params['commit'][branch] = self.get_commit(
+                str(res.stdout))
+            self.params['tags'][branch] = self.get_tag(
+                self.params['commit'][branch])
             status = const.COLORED_STATS['merged']
         else:
             status = const.COLORED_STATS['missing']
@@ -105,9 +107,11 @@ class Git(Link):
     def search(self):
         """Returns result of the search based on the given change."""
         self.verify_and_set_reqs(const.REQUIRED_PARAMS)
+        # Check if local copy exists
         self.params['project_path'] = self.locator.locate_local_project(
             self.params['project'])
         if not self.params['project_path']:
             self.clone_project()
         for branch in self.params['branch']:
             self.query_branch(branch)
+        return self.params

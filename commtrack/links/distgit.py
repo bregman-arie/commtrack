@@ -31,7 +31,8 @@ class Distgit(Link):
     def __init__(self, name, address, parameters):
         super(Distgit, self).__init__(name, address, const.LINK_TYPE, parameters)
         self.locator = Locator(paths=const.PROJECT_PATHS, sub_dirs=[self.name],
-                               separators=const.PROJECT_SEPARATORS)
+                               separators=const.PROJECT_SEPARATORS,
+                               replacers=self.plugin.REPLACE_CHARS[self.ltype])
 
     def locate_project(self, project):
         """Returns project path.
@@ -152,5 +153,5 @@ class Distgit(Link):
             self.params['project'])
         if not self.params['project_path']:
             self.clone_project()
-            for branch in self.params['branch']:
-                self.query_branch(branch)
+        for branch in self.params['branch']:
+            self.query_branch(branch)

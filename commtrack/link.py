@@ -40,14 +40,10 @@ class Link(object):
             LOG.info(result)
 
     def check_param_is_defined(self, param):
-        if not self.chain_params['global'][param]:
-            for k, v in self.chain_params.items():
-                if param in v and v[param]:
-                    self.params[param] = v[param]
-                    return True
-        else:
-            self.params[param] = self.chain_params['global'][param]
-            return True
+        for k, v in self.chain_params.items():
+            if param in v and v[param]:
+                self.params[param] = v[param]
+                return True
 
     def verify_at_least_one_provided(self, params):
         one_defined = False
@@ -56,7 +52,7 @@ class Link(object):
             if exists:
                 one_defined = True
         if not one_defined:
-            print(common_exc.provide_at_least_one_param(params))
+            print(common_exc.provide_at_least_one_param(self.name, params))
             sys.exit(2)
 
     def verify_and_set_reqs(self, required_params):
