@@ -78,7 +78,7 @@ class Chain(object):
             try:
                 links_li.append(self.available_links[link])
             except KeyError:
-                LOG.info(missing_link(link))
+                LOG.error(missing_link(link))
                 sys.exit(2)
         return links_li
 

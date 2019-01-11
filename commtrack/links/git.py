@@ -65,7 +65,8 @@ class Git(Link):
 
     def grep_change(self, change):
         """Checks if change is part of the project."""
-        change_grep_cmd = ["git --no-pager log --grep={}".format(change)]
+        # Don't use git --grep as it always returns 0
+        change_grep_cmd = ["git --no-pager log | grep -B 50 {}".format(change)]
         res = subprocess.run(change_grep_cmd, shell=True,
                              cwd=self.params['project_path'],
                              stdout=subprocess.PIPE)
@@ -81,7 +82,8 @@ class Git(Link):
         get_tag_cmd = ['git --no-pager tag --contains {} | head -n 1'.format(commit)]
         res = subprocess.run(get_tag_cmd, shell=True,
                              cwd=self.params['project_path'],
-                             stdout=subprocess.PIPE)
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.DEVNULL)
         return res.stdout.strip()
 
     def append_result(self, res, branch):

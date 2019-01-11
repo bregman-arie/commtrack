@@ -7,6 +7,7 @@ name = "pypi"
 commtrack = {editable = true,path = "."}
 crayons = "*"
 pyyaml = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 

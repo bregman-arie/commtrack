@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4f10df16410eb908a99be8d50b5a5a45a38d76ecc203e38f569bb369f5d6e4cd"
+            "sha256": "3af76f055595e833307bd9f6e397c7cf31a739ec7256192d8e6c9b4a8d53ef48"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,15 @@
         ]
     },
     "default": {
+        "beautifulsoup4": {
+            "hashes": [
+                "sha256:194ec62a25438adcb3fdb06378b26559eda1ea8a747367d34c33cef9c7f48d57",
+                "sha256:90f8e61121d6ae58362ce3bed8cd997efb00c914eae0ff3d363c32f9a9822d10",
+                "sha256:f0abd31228055d698bb392a826528ea08ebb9959e6bea17c606fd9c9009db938"
+            ],
+            "index": "pypi",
+            "version": "==4.6.3"
+        },
         "colorama": {
             "hashes": [
                 "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d",
@@ -26,13 +35,6 @@
         "commtrack": {
             "editable": true,
             "path": "."
-        },
-        "configparser": {
-            "hashes": [
-                "sha256:5308b47021bc2340965c371f0f058cc6971a04502638d4244225c49d80db273a",
-                "sha256:55e584d660e578587fb5441b4ff1554134a11c7b82ac6e2297daf9f5ef6c53a6"
-            ],
-            "version": "==3.5.0"
         },
         "crayons": {
             "hashes": [
