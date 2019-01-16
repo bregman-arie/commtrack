@@ -17,6 +17,7 @@ import logging
 import sys
 
 from commtrack.common import exceptions as common_exc
+from commtrack.exceptions.usage import general_usage
 
 LOG = logging.getLogger(__name__)
 
@@ -52,7 +53,8 @@ class Link(object):
             if exists:
                 one_defined = True
         if not one_defined:
-            print(common_exc.provide_at_least_one_param(self.name, params))
+            LOG.error(common_exc.provide_at_least_one_param(self.name, params))
+            LOG.error(general_usage())
             sys.exit(2)
 
     def verify_and_set_reqs(self, required_params):
@@ -66,8 +68,14 @@ class Link(object):
             else:
                 exists = self.check_param_is_defined(param)
                 if not exists:
-                    print(common_exc.missing_requirements(param))
+                    LOG.error(common_exc.missing_requirements(param))
+                    LOG.error(general_usage())
                     sys.exit(2)
 
     def set_parameters(self, params):
         self.chain_params = params
+
+    def __str__(self):
+        link = "{}\nLink: {}\nAddress: {}\nType: {}".format(
+            '-' * 6, self.name, self.address, self.ltype)
+        return link

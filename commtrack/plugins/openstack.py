@@ -24,6 +24,14 @@ BRANCH_MAP = {'git':
                'stable/queens': 'origin/rhos-13.0-rhel-7',
                'stable/rocky': 'origin/rhos-14.0-rhel-7',
                'stable/ocata': 'origin/rhos-11.0-rhel-7'},
+              'repository':
+              {'rhos-14.0-patches':
+               '14.0-RHEL-7/latest/RH7-RHOS-14.0/x86_64/os/Packages',
+               'rhos-12.0-patches':
+               '12.0-RHEL-7/latest/RH7-RHOS-12.0/x86_64/os/Packages',
+               'rhos-13.0-patches':
+               '13.0-RHEL-7/latest/RH7-RHOS-13.0/x86_64/os/Packages',
+               },
               }
 
 REPLACE_CHARS = {'distgit': [('/', '-'), ('', '')]}

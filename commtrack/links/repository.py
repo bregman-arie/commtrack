@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 import logging
 import re
 import requests
+import urllib.parse
 
 
 from commtrack.repository import constants as const
@@ -30,9 +31,12 @@ class Repository(Link):
         super(Repository, self).__init__(name, address,
                                          const.LINK_TYPE, parameters)
 
-    def check_if_package_exists(self, version):
+    def check_if_package_exists(self, branch, version):
         """Returns True if package exists in the given version."""
-        resp = requests.get(self.address)
+        address_suffix = self.plugin.BRANCH_MAP[self.ltype][branch]
+        full_address = urllib.parse.urljoin(self.address, address_suffix)
+        print(full_address)
+        resp = requests.get(full_address)
         soup = BeautifulSoup(resp.text, 'html.parser')
         for tr in soup.find_all('tr'):
             print(tr)
@@ -42,5 +46,5 @@ class Repository(Link):
 
     def search(self):
         self.verify_and_set_reqs(const.REQUIRED_PARAMS)
-        for tag in self.params['tags']:
-            self.check_if_package_exists(tag)
+        for branch, tag in self.params['tags'].items():
+            self.check_if_package_exists(branch, tag)

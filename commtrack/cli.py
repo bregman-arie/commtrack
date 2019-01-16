@@ -37,7 +37,10 @@ def main():
 
     # Create a chain and execute it
     chain = Chain(vars(args))
-    chain.run()
+    if args.main_command == 'list':
+        chain.list()
+    else:
+        chain.run()
 
 
 if __name__ == '__main__':

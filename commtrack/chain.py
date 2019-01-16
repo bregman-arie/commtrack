@@ -96,6 +96,10 @@ class Chain(object):
             link.set_parameters(self.parameters)
             link.print_results()
 
+    def list(self):
+        for link in self.links:
+            LOG.info(link)
+
     @staticmethod
     def locate_chain_file():
         """Locates chain file."""
