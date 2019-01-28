@@ -97,8 +97,13 @@ class Chain(object):
             link.print_results()
 
     def list(self):
+        LOG.info(crayons.green("Part of the defined chain:"))
         for link in self.links:
             LOG.info(link)
+        LOG.info(crayons.green("\nAdditional available links:"))
+        for name, link in self.available_links.items():
+            if link not in self.links:
+                LOG.info(link)
 
     @staticmethod
     def locate_chain_file():

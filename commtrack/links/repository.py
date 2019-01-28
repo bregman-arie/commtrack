@@ -34,15 +34,16 @@ class Repository(Link):
     def check_if_package_exists(self, branch, version):
         """Returns True if package exists in the given version."""
         address_suffix = self.plugin.BRANCH_MAP[self.ltype][branch]
+        # urljoin will drop part of the address if '/' is not presented
+        if not (self.address).endswith('/'):
+            self.address = self.address + '/'
         full_address = urllib.parse.urljoin(self.address, address_suffix)
-        print(full_address)
         resp = requests.get(full_address)
         soup = BeautifulSoup(resp.text, 'html.parser')
-        for tr in soup.find_all('tr'):
-            print(tr)
-            if tr.a:
-                name = re.search(r'(^[a-zA-z0-9\-]*)\-\d', tr.a.get('href'))
-                print(name)
+        for a in soup.find_all('a'):
+            print(a)
+            name = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
+            print(name)
 
     def search(self):
         self.verify_and_set_reqs(const.REQUIRED_PARAMS)
