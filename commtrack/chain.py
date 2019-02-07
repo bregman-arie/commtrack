@@ -32,7 +32,8 @@ class Chain(object):
         self.available_links = self.get_predefined_links()
         self.load_links_from_file(self.parameters['global']['links'])
         if self.parameters['global']['links']:
-            self.links = self.get_link_instances(self.parameters['global']['links'])
+            self.links = self.get_link_instances(
+                self.parameters['global']['links'])
 
     def get_link_type_class(self, link_type):
         """Returns specific link class based on give type argument."""

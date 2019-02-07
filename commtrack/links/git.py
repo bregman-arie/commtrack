@@ -16,7 +16,8 @@ import re
 import subprocess
 import sys
 
-from commtrack.git import constants as const
+from commtrack.git import constants as git_const
+from commtrack.common import constants as const
 from commtrack.git import exceptions as exc
 from commtrack.link import Link
 from commtrack.locator import Locator
@@ -28,14 +29,16 @@ class Git(Link):
     """Managing operations on Git based servers."""
 
     def __init__(self, name, address, parameters):
-        super(Git, self).__init__(name, address, const.LINK_TYPE, parameters)
-        self.locator = Locator(paths=const.PROJECT_PATHS, sub_dirs=[self.name],
+        super(Git, self).__init__(name, address,
+                                  git_const.LINK_TYPE, parameters)
+        self.locator = Locator(paths=git_const.PROJECT_PATHS,
+                               sub_dirs=[self.name],
                                separators=const.PROJECT_SEPARATORS)
         self.params['commit'] = self.params['tags'] = dict()
 
     def clone_project(self):
         git_url, project_name = self.get_git_url()
-        self.project_path = const.DEFAULT_PATH
+        self.project_path = git_const.DEFAULT_PATH
         + '/' + self.name + '/' + project_name
         clone_cmd = const.CLONE_CMD + [git_url] + [self.project_path]
         subprocess.run(clone_cmd, stdout=subprocess.DEVNULL)
@@ -79,7 +82,8 @@ class Git(Link):
 
     def get_tag(self, commit):
         """Returns tag from given commit."""
-        get_tag_cmd = ['git --no-pager tag --contains {} | head -n 1'.format(commit)]
+        get_tag_cmd = ['git --no-pager tag --contains {} | head -n 1'.format(
+            commit)]
         res = subprocess.run(get_tag_cmd, shell=True,
                              cwd=self.params['project_path'],
                              stdout=subprocess.PIPE,
@@ -93,9 +97,9 @@ class Git(Link):
                 str(res.stdout))
             self.params['tags'][branch] = self.get_tag(
                 self.params['commit'][branch])
-            status = const.COLORED_STATS['merged']
+            status = git_const.COLORED_STATS['merged']
         else:
-            status = const.COLORED_STATS['missing']
+            status = git_const.COLORED_STATS['missing']
         self.results.append("Status in project {} branch {} is: {}".format(
             self.params['project_path'].split('/')[-1], branch, status))
 
@@ -108,7 +112,7 @@ class Git(Link):
 
     def search(self):
         """Returns result of the search based on the given change."""
-        self.verify_and_set_reqs(const.REQUIRED_PARAMS)
+        self.verify_and_set_reqs(git_const.REQUIRED_PARAMS)
         # Check if local copy exists
         self.params['project_path'] = self.locator.locate_local_project(
             self.params['project'])

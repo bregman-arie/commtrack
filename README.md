@@ -24,6 +24,16 @@ commtrack -c 2142
 commtrack --changeid t3gq2 --links openstack_gerrit
 ```
 
+## Supported Type of Links
+
+Type | Description
+:------:|:--------:
+Gerrit | Code Review System
+Git | Version Control System
+Dist-Git | Packaging repo (Located in a git system)
+Repository | A collection of packages :)
+
+
 ## User Guide
 
 Would like to learn more about Commtrack? Click [here](docs/user_guide.md)

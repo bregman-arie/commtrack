@@ -18,7 +18,8 @@ import requests
 import urllib.parse
 
 
-from commtrack.repository import constants as const
+from commtrack.repository import constants as repo_const
+from commtrack.common import constants as const
 from commtrack.link import Link
 
 LOG = logging.getLogger(__name__)
@@ -29,23 +30,31 @@ class Repository(Link):
 
     def __init__(self, name, address, parameters):
         super(Repository, self).__init__(name, address,
-                                         const.LINK_TYPE, parameters)
+                                         repo_const.LINK_TYPE, parameters)
 
     def check_if_package_exists(self, branch, version):
         """Returns True if package exists in the given version."""
         address_suffix = self.plugin.BRANCH_MAP[self.ltype][branch]
+
         # urljoin will drop part of the address if '/' is not presented
         if not (self.address).endswith('/'):
             self.address = self.address + '/'
+
         full_address = urllib.parse.urljoin(self.address, address_suffix)
         resp = requests.get(full_address)
         soup = BeautifulSoup(resp.text, 'html.parser')
+
         for a in soup.find_all('a'):
-            print(a)
-            name = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
-            print(name)
+            for sep in const.PROJECT_SEPARATORS:
+                project_name = self.params['project'].split(sep)[-1]
+                if project_name in a.get('href'):
+                    name_re = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
+                    name = name_re.group(1)
+                    print(name)
+                    if project_name == name:
+                        print(a.get('href'))
 
     def search(self):
-        self.verify_and_set_reqs(const.REQUIRED_PARAMS)
+        self.verify_and_set_reqs(repo_const.REQUIRED_PARAMS)
         for branch, tag in self.params['tags'].items():
             self.check_if_package_exists(branch, tag)

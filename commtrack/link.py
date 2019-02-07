@@ -31,7 +31,8 @@ class Link(object):
         self.chain_params = parameters
         self.params = dict()
         self.plugin = importlib.import_module(
-            "commtrack.plugins.{}".format(self.chain_params['global']['plugin']))
+            "commtrack.plugins.{}".format(
+                self.chain_params['global']['plugin']))
         self.results = []
 
     def print_results(self):

@@ -54,7 +54,7 @@ Type | Description
 :------:|:--------:
 Gerrit | Code Review System
 Git | Version Control System
-Dist-Git | Packaging repo (Located in git system)
+Dist-Git | Packaging repo (Located in a git system)
 Repository | A collection of packages :)
 
 ## Predefined Links

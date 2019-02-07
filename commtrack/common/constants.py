@@ -12,25 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-# Note that order is very important since it determines which
-# chain file will be used first in case of multiple matches.
-import crayons
-from os.path import expanduser
-
-HOME_DIR = expanduser("~")
-
-PROJECT_PATHS = [HOME_DIR, HOME_DIR + '/commtrack',
-                 HOME_DIR + '/git', '/tmp/git']
-
-DEFAULT_PATH = PROJECT_PATHS[0]
-
-LINK_TYPE = 'Distgit'
-
-DEFAULT_CLONE_PATH = '~'
-
 PROJECT_SEPARATORS = ['.', '/']
-
-COLORED_STATS = {'merged': crayons.green('Merged'),
-                 'missing': crayons.red('Missing')}
-
-REQUIRED_PARAMS = ['project', 'branch', 'subject']
+LS_REMOTE_CMD = ['git', 'ls-remote']
+CLONE_CMD = ['git', 'clone']

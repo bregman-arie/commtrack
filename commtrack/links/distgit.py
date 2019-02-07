@@ -17,7 +17,8 @@ import re
 import subprocess
 import sys
 
-from commtrack.distgit import constants as const
+from commtrack.distgit import constants as dg_const
+from commtrack.common import constants as const
 from commtrack.distgit import exceptions as exc
 from commtrack.link import Link
 from commtrack.locator import Locator
@@ -29,8 +30,8 @@ class Distgit(Link):
     """Managing operations on Distgit repos."""
 
     def __init__(self, name, address, parameters):
-        super(Distgit, self).__init__(name, address, const.LINK_TYPE, parameters)
-        self.locator = Locator(paths=const.PROJECT_PATHS, sub_dirs=[self.name],
+        super(Distgit, self).__init__(name, address, dg_const.LINK_TYPE, parameters)
+        self.locator = Locator(paths=dg_const.PROJECT_PATHS, sub_dirs=[self.name],
                                separators=const.PROJECT_SEPARATORS,
                                replacers=self.plugin.REPLACE_CHARS[self.ltype])
 
@@ -39,7 +40,7 @@ class Distgit(Link):
 
         If project couldn't be find, return None.
         """
-        for path in const.PROJECT_PATHS:
+        for path in dg_const.PROJECT_PATHS:
             for sep in const.PROJECT_SEPARATORS:
                 for sub_dir in ['', self.name + '/']:
                     for rep in self.plugin.REPLACE_CHARS[self.ltype]:
@@ -81,7 +82,7 @@ class Distgit(Link):
 
     def clone_project(self, address, project):
         git_url, project_name = self.get_git_url(address, project)
-        self.project_path = (const.DEFAULT_PATH +
+        self.project_path = (dg_const.DEFAULT_PATH +
                              '/' + self.name + '/' + project_name)
         clone_cmd = const.CLONE_CMD + [git_url] + [self.project_path]
         subprocess.run(clone_cmd, stdout=subprocess.DEVNULL)
@@ -136,19 +137,19 @@ class Distgit(Link):
                         subject = True
                     line = f.readline()
             if subject:
-                status = const.COLORED_STATS['merged']
+                status = dg_const.COLORED_STATS['merged']
                 self.results.append(
                     "Status in project {} branch {} version {} is: {}".format(
                         self.project_path.split('/')[-1], branch, version, status))
             else:
-                status = const.COLORED_STATS['missing']
+                status = dg_const.COLORED_STATS['missing']
                 self.results.append(
                     "Status in project {} branch {} is: {}".format(
                         self.project_path.split('/')[-1], branch, status))
 
     def search(self):
         """Returns result of the search based on the given change."""
-        self.verify_and_set_reqs(const.REQUIRED_PARAMS)
+        self.verify_and_set_reqs(dg_const.REQUIRED_PARAMS)
         self.params['project_path'] = self.locator.locate_local_project(
             self.params['project'])
         if not self.params['project_path']:
