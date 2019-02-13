@@ -46,8 +46,8 @@ class Gerrit(Link):
 
         query_cmd = self.get_basic_query_cmd(self.address)
 
-        if self.chain_params['global']['change_id']:
-            query_cmd.append('change:{}'.format(self.chain_params['global']['change_id']))
+        if self.params['change_id']:
+            query_cmd.append('change:{}'.format(self.params['change_id']))
 
         output = subprocess.check_output(query_cmd)
         decoded_output = output.decode('utf-8')
@@ -65,6 +65,10 @@ class Gerrit(Link):
         """Returns the result of searching the given change."""
         self.verify_and_set_reqs(const.REQUIRED_PARAMS)
         raw_result_li = self.query()
+
+        # Check if there is at least one result
+        if len(raw_result_li) < 3:
+            self.results.append("Couldn't find such change.")
 
         for res in raw_result_li:
             if 'type' not in res and res != '':

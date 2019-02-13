@@ -37,9 +37,14 @@ class Git(Link):
         self.params['commit'] = self.params['tags'] = dict()
 
     def clone_project(self):
-        git_url, project_name = self.get_git_url()
-        self.project_path = git_const.DEFAULT_PATH
-        + '/' + self.name + '/' + project_name
+        git_url, project_name = self.get_git_url(self.address,
+                                                 self.params['project'])
+        print(git_url)
+        print(project_name)
+        print(git_const.DEFAULT_PATH)
+        print(self.name)
+        self.project_path = (git_const.DEFAULT_PATH + '/' + self.name +
+                             '/' + project_name)
         clone_cmd = const.CLONE_CMD + [git_url] + [self.project_path]
         subprocess.run(clone_cmd, stdout=subprocess.DEVNULL)
 
@@ -98,10 +103,11 @@ class Git(Link):
             self.params['tags'][branch] = self.get_tag(
                 self.params['commit'][branch])
             status = git_const.COLORED_STATS['merged']
+            self.params['found'] = True
         else:
             status = git_const.COLORED_STATS['missing']
         self.results.append("Status in project {} branch {} is: {}".format(
-            self.params['project_path'].split('/')[-1], branch, status))
+            self.params['project'], branch, status))
 
     def query_branch(self, branch):
         # Make sure branch exists
@@ -121,3 +127,28 @@ class Git(Link):
         for branch in self.params['branch']:
             self.query_branch(branch)
         return self.params
+
+    def get_git_url(self, address, project):
+        """Returns working git URL based on project name and predefined
+        separators."""
+        repo_url = address + '/' + project
+        ls_cmd = const.LS_REMOTE_CMD
+        res = subprocess.run(ls_cmd + [repo_url], stderr=subprocess.DEVNULL,
+                             stdout=subprocess.DEVNULL)
+        if res.returncode == 0:
+            return repo_url, project
+        else:
+            for sep in const.PROJECT_SEPARATORS:
+                project_name = project.split(sep)[-1]
+                project_url = address + '/' + project_name
+                res = subprocess.run(ls_cmd + [project_url],
+                                     stdout=subprocess.DEVNULL)
+                if res.returncode == 0:
+                    return project_url, project_name
+            for rep in self.plugin.REPLACE_CHARS[self.ltype]:
+                project_name = project.replace(rep[0], rep[1])
+                project_url = address + '/' + project_name
+                res = subprocess.run(ls_cmd + [project_url],
+                                     stdout=subprocess.DEVNULL)
+                if res.returncode == 0:
+                    return project_url, project_name

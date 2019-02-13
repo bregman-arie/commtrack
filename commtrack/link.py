@@ -29,7 +29,7 @@ class Link(object):
         self.address = address
         self.ltype = ltype.lower()
         self.chain_params = parameters
-        self.params = dict()
+        self.params = {'found': False}
         self.plugin = importlib.import_module(
             "commtrack.plugins.{}".format(
                 self.chain_params['global']['plugin']))

@@ -55,17 +55,21 @@ class Chain(object):
         chain_f = self.parameters['global']['chain_file'] or self.locate_chain_file()
         chain = None
         if chain_f:
-            with open(chain_f, 'r') as stream:
-                data = yaml.load(stream)
-                for k, v in data.items():
-                    if k == 'chain' and not ignore_chain:
-                        chain = [item for item in v.split(',')]
-                    if k == 'links':
-                        for link_type, link in v.items():
-                            for link_name, info in link.items():
-                                self.add_link(link_name,
-                                              info['address'],
-                                              link_type)
+            try:
+                with open(chain_f, 'r') as stream:
+                    data = yaml.load(stream)
+                    for k, v in data.items():
+                        if k == 'chain' and not ignore_chain:
+                            chain = [item for item in v.split(',')]
+                        if k == 'links':
+                            for link_type, link in v.items():
+                                for link_name, info in link.items():
+                                    self.add_link(link_name,
+                                                  info['address'],
+                                                  link_type)
+            except OSError:
+                LOG.error("Couldnt find {}".format(chain_f))
+                sys.exit(2)
             if chain:
                 self.links = self.get_link_instances(chain)
             LOG.debug("Loaded data from: {}".format(chain_f))
@@ -96,6 +100,8 @@ class Chain(object):
             self.parameters[link.name] = link_params
             link.set_parameters(self.parameters)
             link.print_results()
+            if not link_params['found']:
+                break
 
     def list(self):
         LOG.info(crayons.green("Part of the defined chain:"))

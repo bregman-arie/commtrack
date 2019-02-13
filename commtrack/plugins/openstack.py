@@ -34,4 +34,4 @@ BRANCH_MAP = {'git':
                },
               }
 
-REPLACE_CHARS = {'distgit': [('/', '-'), ('', '')]}
+REPLACE_CHARS = {'default': [('/', '-'), ('', '')]}

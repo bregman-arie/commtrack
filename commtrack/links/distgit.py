@@ -33,7 +33,7 @@ class Distgit(Link):
         super(Distgit, self).__init__(name, address, dg_const.LINK_TYPE, parameters)
         self.locator = Locator(paths=dg_const.PROJECT_PATHS, sub_dirs=[self.name],
                                separators=const.PROJECT_SEPARATORS,
-                               replacers=self.plugin.REPLACE_CHARS[self.ltype])
+                               replacers=self.plugin.REPLACE_CHARS['default'])
 
     def locate_project(self, project):
         """Returns project path.
