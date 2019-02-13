@@ -11,6 +11,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+import crayons
 import json
 import logging
 import subprocess
@@ -68,7 +69,9 @@ class Gerrit(Link):
 
         # Check if there is at least one result
         if len(raw_result_li) < 3:
-            self.results.append("Couldn't find such change.")
+            self.results.append("{} find such change.".format(crayons.red("Couldn't")))
+        else:
+            self.params['found'] = True
 
         for res in raw_result_li:
             if 'type' not in res and res != '':

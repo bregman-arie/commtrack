@@ -68,7 +68,7 @@ class Chain(object):
                                                   info['address'],
                                                   link_type)
             except OSError:
-                LOG.error("Couldnt find {}".format(chain_f))
+                LOG.error("Couldnt find the chain file: {}".format(chain_f))
                 sys.exit(2)
             if chain:
                 self.links = self.get_link_instances(chain)

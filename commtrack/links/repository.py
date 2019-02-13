@@ -47,20 +47,20 @@ class Repository(Link):
         for a in soup.find_all('a'):
             for sep in const.PROJECT_SEPARATORS:
                 project_name = self.params['project'].split(sep)[-1]
-                print(project_name)
                 if project_name in a.get('href'):
                     name_re = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
                     name = name_re.group(1)
-                    print(name)
+                    print("name: {}".format(name))
+                    print("project name: {}".format(project_name))
                     if project_name == name:
-                        print(a.get('href'))
+                        name_re = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
             for rep in self.plugin.REPLACE_CHARS['default']:
                 project_name = self.params['project'].replace(rep[0], rep[1])
-                print(project_name)
                 if project_name in a.get('href'):
                     name_re = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
                     name = name_re.group(1)
-                    print(name)
+                    print("name: {}".format(name))
+                    print("project name: {}".format(project_name))
                     if project_name == name:
                         print(a.get('href'))
 
@@ -68,3 +68,4 @@ class Repository(Link):
         self.verify_and_set_reqs(repo_const.REQUIRED_PARAMS)
         for branch, tag in self.params['tags'].items():
             self.check_if_package_exists(branch, tag)
+        return self.params

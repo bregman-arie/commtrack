@@ -46,7 +46,7 @@ def missing_link(link):
     """Message on how to use links."""
     message = """
 Couldn't find the link {0}.
-Make sure link in configured in chain file the following way:
+Make sure the link is configured in chain file the following way:
 
     {1}
       {2}

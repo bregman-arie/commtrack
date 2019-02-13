@@ -12,6 +12,10 @@ Any other related link modules are usually added to a directory named as the lin
 For example: there is `commtrack/gerrit/` directory which holds information on gerrit exceptions,
 constants, etc. The link itself is defined in `commtrack/links/gerrit.py`
 
+## What a new type of link must include?
+
+* `search` methods that returns link parameters this way: return self.params
+
 
 ## How to contribute?
 
