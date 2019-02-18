@@ -24,3 +24,14 @@ Try perhaps switching to change ID instead of commit:
 
 """.format(crayons.red("commtrack --changeid xyz"))
     return message
+
+
+def multiple_projects():
+    """Multiple different projects match while tracking a change."""
+    message = """
+Found {} that match your change.
+Since there is no support for tracking changes in different
+projects, try to add more attributes to focus on a specific change
+or set of changes.
+""".format(crayons.red("multiple different projects"))
+    return message

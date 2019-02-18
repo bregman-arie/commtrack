@@ -21,7 +21,12 @@ echo "> commtrack --links openstack_gerrit --changeid 12ja"
 read k
 commtrack --links openstack_gerrit --changeid 12ja
 
-# Normal execution
+# Track using change ID
 echo ">commtrack --changeid I32e76a83443dd8e7d79b396499747f29b4762e92"
 read k
 commtrack --changeid I32e76a83443dd8e7d79b396499747f29b4762e92
+
+# Track using a specific link and subject
+echo ">commtrack --links openstack_gerrit --subject yolooo"
+read k
+commtrack --links openstack_gerrit --subject yolooo

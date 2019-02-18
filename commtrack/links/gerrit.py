@@ -47,8 +47,11 @@ class Gerrit(Link):
 
         query_cmd = self.get_basic_query_cmd(self.address)
 
-        if self.params['change_id']:
+        if 'change_id' in self.params:
             query_cmd.append('change:{}'.format(self.params['change_id']))
+
+        if 'subject' in self.params:
+            query_cmd.append(self.params['subject'])
 
         output = subprocess.check_output(query_cmd)
         decoded_output = output.decode('utf-8')
@@ -62,10 +65,12 @@ class Gerrit(Link):
         # return json.loads(query_result_li)
         return query_result_li
 
-    def search(self):
+    def search(self, same_project=True):
         """Returns the result of searching the given change."""
         self.verify_and_set_reqs(const.REQUIRED_PARAMS)
         raw_result_li = self.query()
+
+        print(raw_result_li)
 
         # Check if there is at least one result
         if len(raw_result_li) < 3:
@@ -73,16 +78,32 @@ class Gerrit(Link):
         else:
             self.params['found'] = True
 
+        json_result_li = []
         for res in raw_result_li:
             if 'type' not in res and res != '':
-                self.update_link_params(res)
-                self.results.append(self.process_result(res))
+                json_result_li.append(json.loads(res))
+        if len(json_result_li) > 1:
+            same_project = self.verify_same_project(json_result_li)
+        if same_project:
+            for result in json_result_li:
+                self.update_link_params(result)
+                self.results.append(self.process_result(result))
+        else:
+            LOG.error(exc.multiple_projects())
+            sys.exit(2)
 
         return self.params
 
-    def update_link_params(self, raw_data):
+    def verify_same_project(self, changes):
+        """Returns true if all the changes belong to the same project."""
+        project = changes[0]['project']
+        for change in changes[1:]:
+            if change['project'] != project:
+                return False
+        return True
+
+    def update_link_params(self, data):
         """Update link parameters using data discovered during the query."""
-        data = json.loads(raw_data)
         for param in const.SINGLE_PROVIDED_PARAMS:
             if param in data:
                 self.params[param] = data[param]
@@ -92,10 +113,8 @@ class Gerrit(Link):
                     self.params[param] = list()
                 self.params[param].append(data[param])
 
-    def process_result(self, result):
+    def process_result(self, data):
         """Returns adjusted result with only the relevant information."""
-        data = json.loads(result)
-
         result_str = "Status in project {} branch {} is {}".format(
             data['project'],
             data['branch'],

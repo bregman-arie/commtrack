@@ -74,16 +74,18 @@ class Git(Link):
     def grep_change(self, change):
         """Checks if change is part of the project."""
         # Don't use git --grep as it always returns 0
-        change_grep_cmd = ["git --no-pager log | grep -B 50 {}".format(change)]
+        change_grep_cmd = ["git --no-pager log | grep -B 50 '{}'".format(change)]
         res = subprocess.run(change_grep_cmd, shell=True,
                              cwd=self.params['project_path'],
-                             stdout=subprocess.PIPE)
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.DEVNULL)
         return res
 
     def get_commit(self, text):
         """Returns commit from given text."""
-        commit_re = re.search(r'\b[0-9a-f]{5,40}\b', text)
-        return commit_re.group(0)
+        print(text)
+        commit_re = re.search(r'\\ncommit (\b[0-9a-f]{5,40}\b)', text)
+        return commit_re.group(1)
 
     def get_tag(self, commit):
         """Returns tag from given commit."""
@@ -93,13 +95,24 @@ class Git(Link):
                              cwd=self.params['project_path'],
                              stdout=subprocess.PIPE,
                              stderr=subprocess.DEVNULL)
-        return res.stdout.strip()
+        tag = res.stdout.strip()
+        if not tag:
+            res = subprocess.run(
+                git_const.LAST_TAG_CMD, shell=True,
+                cwd=self.params['project_path'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL)
+
+        print(commit)
+        print("asdasdsadad: {}".format(tag))
+        return tag
 
     def append_result(self, res, branch):
         """Append customized result based on given result."""
         if res.returncode == 0:
             self.params['commit'][branch] = self.get_commit(
                 str(res.stdout))
+            print(branch)
             self.params['tags'][branch] = self.get_tag(
                 self.params['commit'][branch])
             status = git_const.COLORED_STATS['merged']
@@ -113,7 +126,10 @@ class Git(Link):
         # Make sure branch exists
         branch = self.verify_branch(branch)
         self.checkout_branch(branch)
-        res = self.grep_change(self.params['change_id'])
+        if 'change_id' in self.params:
+            res = self.grep_change(self.params['change_id'])
+        else:
+            res = self.grep_change(self.params['subject'])
         self.append_result(res, branch)
 
     def search(self):

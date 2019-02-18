@@ -47,7 +47,7 @@ def create_parser():
     main_parser.add_argument('--plugin',
                              dest="plugin",
                              default="openstack",
-                             help="The name of the plugin to use.")
+                             help="The name of the plugin to use (Default: openstack)")
     main_parser.add_argument('--project', '-p',
                              dest="project",
                              help="The name of the project.")

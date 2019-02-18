@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 from bs4 import BeautifulSoup
+from distutils.version import StrictVersion
 import logging
 import re
 import requests
@@ -50,8 +51,6 @@ class Repository(Link):
                 if project_name in a.get('href'):
                     name_re = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
                     name = name_re.group(1)
-                    print("name: {}".format(name))
-                    print("project name: {}".format(project_name))
                     if project_name == name:
                         name_re = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
             for rep in self.plugin.REPLACE_CHARS['default']:
@@ -59,13 +58,24 @@ class Repository(Link):
                 if project_name in a.get('href'):
                     name_re = re.search(r'(^[a-zA-z0-9\-]*)\-\d', a.get('href'))
                     name = name_re.group(1)
-                    print("name: {}".format(name))
-                    print("project name: {}".format(project_name))
                     if project_name == name:
-                        print(a.get('href'))
+                        version_re = re.search(r'((\d+\.)+\d+(\-\d+))',
+                                               a.get('href'))
+                        repo_version = version_re.group(1)
+                        print(version)
+                        print(repo_version)
+                        print(StrictVersion(version))
+                        print(StrictVersion(repo_version))
+                        if StrictVersion(version) > StrictVersion(repo_version):
+                            print("version in puddle!")
+                        else:
+                            print("version is not in puddle!")
 
     def search(self):
         self.verify_and_set_reqs(repo_const.REQUIRED_PARAMS)
+        print(self.params['tags'])
+        import sys
+        sys.exit(2)
         for branch, tag in self.params['tags'].items():
             self.check_if_package_exists(branch, tag)
         return self.params
