@@ -12,8 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 from bs4 import BeautifulSoup
-from distutils.version import StrictVersion
+import crayons
 import logging
+from pkg_resources import parse_version
 import re
 import requests
 import urllib.parse
@@ -62,20 +63,15 @@ class Repository(Link):
                         version_re = re.search(r'((\d+\.)+\d+(\-\d+))',
                                                a.get('href'))
                         repo_version = version_re.group(1)
-                        print(version)
-                        print(repo_version)
-                        print(StrictVersion(version))
-                        print(StrictVersion(repo_version))
-                        if StrictVersion(version) > StrictVersion(repo_version):
-                            print("version in puddle!")
-                        else:
-                            print("version is not in puddle!")
+                    break
+        if parse_version(repo_version) > parse_version(version):
+            return "Was looking for {} and found version {}".format(
+                version, crayons.green(repo_version))
+        else:
+            return "Couldn't find version {}. Latest is {}".format(version, repo_version)
 
     def search(self):
         self.verify_and_set_reqs(repo_const.REQUIRED_PARAMS)
-        print(self.params['tags'])
-        import sys
-        sys.exit(2)
         for branch, tag in self.params['tags'].items():
-            self.check_if_package_exists(branch, tag)
+            self.results.append(self.check_if_package_exists(branch, tag))
         return self.params

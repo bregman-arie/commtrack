@@ -14,15 +14,17 @@ pipenv install -e .
 
 ## Usage
 
-```
-# Search for comit 2142
+Search for commit 2142:
 
-commtrack -c 2142
+    commtrack -c 2142
 
-# Search for change ID in OpenStack Gerrit:
+Search for change ID in OpenStack Gerrit:
 
-commtrack --changeid t3gq2 --links openstack_gerrit
-```
+    commtrack --changeid t3gq2 --links openstack_gerrit
+
+Search using the change subject
+
+    commtrack --subject "Fix smb 2.1.6"
 
 ## Supported Type of Links
 

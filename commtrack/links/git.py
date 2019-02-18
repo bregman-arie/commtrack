@@ -39,10 +39,6 @@ class Git(Link):
     def clone_project(self):
         git_url, project_name = self.get_git_url(self.address,
                                                  self.params['project'])
-        print(git_url)
-        print(project_name)
-        print(git_const.DEFAULT_PATH)
-        print(self.name)
         self.project_path = (git_const.DEFAULT_PATH + '/' + self.name +
                              '/' + project_name)
         clone_cmd = const.CLONE_CMD + [git_url] + [self.project_path]
@@ -59,7 +55,7 @@ class Git(Link):
             if branch in self.plugin.BRANCH_MAP[self.ltype]:
                 return self.plugin.BRANCH_MAP[self.ltype][branch]
             else:
-                print(exc.missing_branch(branch))
+                LOG.error((exc.missing_branch(branch)))
                 sys.exit(2)
         else:
             return branch
@@ -83,7 +79,6 @@ class Git(Link):
 
     def get_commit(self, text):
         """Returns commit from given text."""
-        print(text)
         commit_re = re.search(r'\\ncommit (\b[0-9a-f]{5,40}\b)', text)
         return commit_re.group(1)
 
@@ -95,16 +90,15 @@ class Git(Link):
                              cwd=self.params['project_path'],
                              stdout=subprocess.PIPE,
                              stderr=subprocess.DEVNULL)
-        tag = res.stdout.strip()
+        tag = res.stdout.decode('utf-8').strip()
         if not tag:
             res = subprocess.run(
                 git_const.LAST_TAG_CMD, shell=True,
                 cwd=self.params['project_path'],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL)
+            tag = res.stdout.decode('utf-8').strip()
 
-        print(commit)
-        print("asdasdsadad: {}".format(tag))
         return tag
 
     def append_result(self, res, branch):
@@ -112,7 +106,6 @@ class Git(Link):
         if res.returncode == 0:
             self.params['commit'][branch] = self.get_commit(
                 str(res.stdout))
-            print(branch)
             self.params['tags'][branch] = self.get_tag(
                 self.params['commit'][branch])
             status = git_const.COLORED_STATS['merged']

@@ -27,8 +27,8 @@ DEFAULT_PATH = PROJECT_PATHS[0]
 LINK_TYPE = 'Git'
 
 CLONE_CMD = ['git', 'clone']
-
 LS_REMOTE_CMD = ['git', 'ls-remote']
+LAST_TAG_CMD = ['git describe --abbrev=0']
 
 DEFAULT_CLONE_PATH = '~'
 

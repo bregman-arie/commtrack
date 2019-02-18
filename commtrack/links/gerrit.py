@@ -70,8 +70,6 @@ class Gerrit(Link):
         self.verify_and_set_reqs(const.REQUIRED_PARAMS)
         raw_result_li = self.query()
 
-        print(raw_result_li)
-
         # Check if there is at least one result
         if len(raw_result_li) < 3:
             self.results.append("{} find such change.".format(crayons.red("Couldn't")))
