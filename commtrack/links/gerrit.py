@@ -50,6 +50,10 @@ class Gerrit(Link):
         if 'change_id' in self.params:
             query_cmd.append('change:{}'.format(self.params['change_id']))
 
+        if 'project' in self.chain_params['global'] and self.chain_params[
+           'global']['project']:
+            query_cmd.append('project:{}'.format(self.chain_params['global']['project']))
+
         if 'subject' in self.params:
             query_cmd.append(self.params['subject'])
 
@@ -69,6 +73,7 @@ class Gerrit(Link):
         """Returns the result of searching the given change."""
         self.verify_and_set_reqs(const.REQUIRED_PARAMS)
         raw_result_li = self.query()
+        print(raw_result_li)
 
         # Check if there is at least one result
         if len(raw_result_li) < 3:

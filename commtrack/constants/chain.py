@@ -14,5 +14,6 @@
 
 # Note that order is very important since it determines which
 # chain file will be used first in case of multiple matches.
+from pathlib import Path
 
-CHAIN_LOCATIONS = ['.chain', '/etc/commtrack/chain']
+CHAIN_LOCATIONS = ['.chain', '/etc/commtrack/chain', str(Path.home()) + '/.chain']
