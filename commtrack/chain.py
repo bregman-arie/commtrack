@@ -94,13 +94,14 @@ class Chain(object):
 
     def run(self):
         """Runs chain link by link."""
+        last_link_params = None
         for link in self.links:
             LOG.info("\nLooking in {}".format(crayons.yellow(link.name)))
-            link_params = link.search()
-            self.parameters[link.name] = link_params
+            last_link_params = link.search(last_link_params)
+            self.parameters[link.name] = last_link_params
             link.set_parameters(self.parameters)
             link.print_results()
-            if not link_params['found']:
+            if not last_link_params['found']:
                 break
 
     def list(self):

@@ -70,7 +70,7 @@ class Repository(Link):
         else:
             return "Couldn't find version {}. Latest is {}".format(version, repo_version)
 
-    def search(self):
+    def search(self, params=None):
         self.verify_and_set_reqs(repo_const.REQUIRED_PARAMS)
         for branch, tag in self.params['tags'].items():
             self.results.append(self.check_if_package_exists(branch, tag))

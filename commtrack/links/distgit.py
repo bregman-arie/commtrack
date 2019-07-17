@@ -147,7 +147,7 @@ class Distgit(Link):
                     "Status in project {} branch {} is: {}".format(
                         self.project_path.split('/')[-1], branch, status))
 
-    def search(self):
+    def search(self, params=None):
         """Returns result of the search based on the given change."""
         self.verify_and_set_reqs(dg_const.REQUIRED_PARAMS)
         self.params['project_path'] = self.locator.locate_local_project(

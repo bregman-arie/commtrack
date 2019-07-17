@@ -79,7 +79,7 @@ class Git(Link):
 
     def get_commit(self, text):
         """Returns commit from given text."""
-        commit_re = re.search(r'\\ncommit (\b[0-9a-f]{5,40}\b)', text)
+        commit_re = re.search(r'commit (\b[0-9a-f]{5,40}\b)', text)
         return commit_re.group(1)
 
     def get_tag(self, commit):
@@ -115,17 +115,20 @@ class Git(Link):
         self.results.append("Status in project {} branch {} is: {}".format(
             self.params['project'], branch, status))
 
-    def query_branch(self, branch):
+    def query_branch(self, branch, params={}):
         # Make sure branch exists
         branch = self.verify_branch(branch)
         self.checkout_branch(branch)
-        if 'change_id' in self.params:
+        if 'id' in self.params or 'id' in params:
+            change_id = self.params.get('id') or params.get('id')
+            res = self.grep_change(change_id)
+        elif 'change_id' in self.params or not res:
             res = self.grep_change(self.params['change_id'])
-        else:
+        if not res or res.returncode == 1:
             res = self.grep_change(self.params['subject'])
         self.append_result(res, branch)
 
-    def search(self):
+    def search(self, params):
         """Returns result of the search based on the given change."""
         self.verify_and_set_reqs(git_const.REQUIRED_PARAMS)
         # Check if local copy exists
@@ -134,7 +137,7 @@ class Git(Link):
         if not self.params['project_path']:
             self.clone_project()
         for branch in self.params['branch']:
-            self.query_branch(branch)
+            self.query_branch(branch, params)
         return self.params
 
     def get_git_url(self, address, project):

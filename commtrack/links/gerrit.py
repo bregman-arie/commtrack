@@ -69,11 +69,10 @@ class Gerrit(Link):
         # return json.loads(query_result_li)
         return query_result_li
 
-    def search(self, same_project=True):
+    def search(self, params=None, same_project=True):
         """Returns the result of searching the given change."""
         self.verify_and_set_reqs(const.REQUIRED_PARAMS)
         raw_result_li = self.query()
-        print(raw_result_li)
 
         # Check if there is at least one result
         if len(raw_result_li) < 3:
@@ -83,7 +82,7 @@ class Gerrit(Link):
 
         json_result_li = []
         for res in raw_result_li:
-            if 'type' not in res and res != '':
+            if '"type":' not in res and res != '':
                 json_result_li.append(json.loads(res))
         if len(json_result_li) > 1:
             same_project = self.verify_same_project(json_result_li)
